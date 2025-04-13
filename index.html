@@ -27,9 +27,9 @@
     }
 
     #clock-container {
-      position: relative;
       margin-top: 80px;
-      height: 110px;
+      text-align: center;
+      height: auto;
     }
 
     #time {
@@ -38,19 +38,20 @@
       transform: scaleX(0.9);
       font-variant-numeric: tabular-nums;
       display: inline-block;
-      width: 320px; /* 고정 너비로 흔들림 방지 */
+      width: 320px;
       text-align: right;
+      vertical-align: baseline;
     }
+
     #seconds {
-      position: absolute;
-      top: 15px;
-      left: 100%;
-      margin-left: 15px;
-      font-size: 12px;
+      font-size: 18px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
-      width: 40px;            /* 초 너비 고정 */
-      text-align: left;       /* 정렬은 left나 center 중 원하는 걸로 */
+      display: inline-block;
+      width: 40px;
+      text-align: left;
+      vertical-align: baseline;
+      margin-left: 14px;
     }
 
     #memo {
@@ -96,8 +97,7 @@
 </head>
 <body>
   <div id="clock-container">
-    <span id="time"></span>
-    <span id="seconds"></span>
+    <span id="time"></span><span id="seconds"></span>
   </div>
 
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
