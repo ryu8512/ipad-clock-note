@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Clock & Memo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" /> <!-- Orbitron 폰트 추가 -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
   <style>
     html, body {
       margin: 0;
@@ -30,14 +30,22 @@
       font-size: 100px;
       text-align: center;
       margin-top: 80px;
-      font-family: 'Orbitron', sans-serif; /* Orbitron 폰트를 시계에 적용 */
-      transform: scaleX(0.9); /* 가로 폭 압축 */
+      font-family: 'Orbitron', sans-serif;
+      transform: scaleX(0.9);
+      white-space: nowrap;
+    }
+
+    #time-wrapper {
+      display: inline-block;
+      width: 280px; /* 시:분의 고정 폭 */
+      text-align: right;
     }
 
     #seconds {
-      font-size: 12px;
+      font-size: 24px;
+      display: inline-block;
       margin-left: 8px;
-      vertical-align: baseline;
+      vertical-align: top;
     }
 
     #memo {
@@ -83,7 +91,8 @@
 </head>
 <body>
   <div id="clock">
-    <span id="time"></span><span id="seconds"></span>
+    <span id="time-wrapper"><span id="time"></span></span>
+    <span id="seconds"></span>
   </div>
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
