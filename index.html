@@ -1,0 +1,66 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clock & Memo</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    #clock {
+      font-size: 72px;
+      text-align: center;
+    }
+    #seconds {
+      font-size: 24px;
+      margin-left: 10px;
+      vertical-align: super;
+    }
+    #memo {
+      margin-top: auto;
+      font-size: 18px;
+      background-color: black;
+      color: white;
+      border: none;
+      outline: none;
+      resize: none;
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock">
+    <span id="time"></span><span id="seconds"></span>
+  </div>
+  <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('time').textContent = `${hours}:${minutes}`;
+      document.getElementById('seconds').textContent = seconds;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const memo = document.getElementById('memo');
+    memo.value = localStorage.getItem('memo') || '';
+    memo.addEventListener('input', () => {
+      localStorage.setItem('memo', memo.value);
+    });
+  </script>
+</body>
+</html>
