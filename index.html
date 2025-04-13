@@ -41,15 +41,17 @@
       width: 320px; /* 고정 너비로 흔들림 방지 */
       text-align: right;
     }
-
-    #seconds {
-      position: absolute;
-      top: 15px;
-      left: 100%;
-      font-size: 24px;
-      margin-left: 10px;
-      font-family: 'Orbitron', sans-serif;
-    }
+#seconds {
+  position: absolute;
+  top: 15px;
+  left: 100%;
+  margin-left: 15px;
+  font-size: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-variant-numeric: tabular-nums;
+  width: 40px;            /* 초 너비 고정 */
+  text-align: left;       /* 정렬은 left나 center 중 원하는 걸로 */
+}
 
     #memo {
       font-size: 20px;
