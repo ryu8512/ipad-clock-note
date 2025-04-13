@@ -33,19 +33,22 @@
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
       white-space: nowrap;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      font-variant-numeric: tabular-nums; /* 숫자 폭 고정 */
     }
 
     #time-wrapper {
       display: inline-block;
-      width: 280px; /* 시:분의 고정 폭 */
+      width: 320px; /* 넉넉하게 고정 폭 */
       text-align: right;
     }
 
     #seconds {
       font-size: 24px;
-      display: inline-block;
-      margin-left: 8px;
-      vertical-align: top;
+      margin-left: 10px;
+      vertical-align: baseline;
     }
 
     #memo {
