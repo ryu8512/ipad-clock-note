@@ -26,29 +26,29 @@
       padding: 10px;
     }
 
-    #clock {
-      font-size: 100px;
-      text-align: center;
+    #clock-container {
+      position: relative;
       margin-top: 80px;
-      font-family: 'Orbitron', sans-serif;
-      transform: scaleX(0.9);
-      white-space: nowrap;
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      font-variant-numeric: tabular-nums; /* 숫자 폭 고정 */
+      height: 110px;
     }
 
-    #time-wrapper {
+    #time {
+      font-size: 100px;
+      font-family: 'Orbitron', sans-serif;
+      transform: scaleX(0.9);
+      font-variant-numeric: tabular-nums;
       display: inline-block;
-      width: 320px; /* 넉넉하게 고정 폭 */
+      width: 320px; /* 고정 너비로 흔들림 방지 */
       text-align: right;
     }
 
     #seconds {
+      position: absolute;
+      top: 15px;
+      left: 100%;
       font-size: 24px;
       margin-left: 10px;
-      vertical-align: baseline;
+      font-family: 'Orbitron', sans-serif;
     }
 
     #memo {
@@ -81,7 +81,7 @@
         align-items: center;
       }
 
-      #clock {
+      #time {
         font-size: 100px;
       }
 
@@ -93,10 +93,11 @@
   </style>
 </head>
 <body>
-  <div id="clock">
-    <span id="time-wrapper"><span id="time"></span></span>
+  <div id="clock-container">
+    <span id="time"></span>
     <span id="seconds"></span>
   </div>
+
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
   <script>
