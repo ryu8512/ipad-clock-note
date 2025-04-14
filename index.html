@@ -28,11 +28,12 @@
     #clock-container {
       text-align: center;
       height: auto;
+      position: relative;
     }
 
     #date {
-      font-size: 3vw;
-      margin-bottom: 3vw;
+      font-size: 40px;
+      margin-bottom: 60px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
       text-align: center;
@@ -42,27 +43,24 @@
       display: inline-block;
       position: relative;
       font-variant-numeric: tabular-nums;
-      width: 100%;
-      max-width: 100%;
-      overflow: hidden;
     }
 
     #time {
-      font-size: 18vw; /* 뷰포트 기반 */
+      font-size: 120px;  /* 시계 크기 고정 */
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
       text-align: right;
       display: inline-block;
-      font-variant-numeric: tabular-nums;
+      min-width: 430px;   /* 숫자 폭 흔들림 방지 */
       width: 100%;
     }
 
     #seconds {
       position: absolute;
       top: 100%;
-      right: 5%;
-      margin-top: -1vw;
-      font-size: 3vw;
+      right: 5%;  /* 초 위치 세부 조정 */
+      margin-top: -10px; /* 시계와 초 사이의 거리 조정 */
+      font-size: 32px;
       font-family: 'Orbitron', sans-serif;
       text-align: right;
       font-variant-numeric: tabular-nums;
@@ -106,20 +104,19 @@
       }
 
       #clock-container {
-        flex: 7 0 0; /* 시계 70% */
+        flex: 7;  /* 시계 70% */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding-left: 10px;
-        overflow: hidden; /* 넘치지 않도록 */
+        padding-left: 5px;
+        overflow: hidden;
       }
 
       #memo {
-        flex: 3 0 0; /* 메모 30% */
+        flex: 3;  /* 메모 30% */
         height: 100vh;
         margin: 0;
-        width: 100%;
       }
     }
   </style>
