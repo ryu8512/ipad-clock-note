@@ -33,8 +33,7 @@
     .clock-inner {
       display: inline-flex;
       align-items: baseline;
-      justify-content: center;
-      width: 500px; /* 전체 시계 영역 고정 */
+      justify-content: flex-start;
     }
 
     #time {
@@ -45,7 +44,8 @@
       display: inline-block;
       text-align: right;
       flex-shrink: 0;
-      width: 420px; /* 시:분 고정 폭 */
+      min-width: 430px;
+      overflow: visible;
     }
 
     #seconds {
@@ -55,7 +55,8 @@
       display: inline-block;
       margin-left: 4px;
       flex-shrink: 0;
-      width: 50px; /* 초 고정 폭 */
+      min-width: 50px;
+      overflow: visible;
     }
 
     #memo {
@@ -98,9 +99,9 @@
       #clock-container {
         flex: 7;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start; /* 왼쪽 정렬 */
         align-items: center;
-        padding-left: 0;
+        padding-left: 40px; /* 원하는 만큼 조절 가능 */
       }
 
       #memo {
