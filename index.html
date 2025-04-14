@@ -32,10 +32,11 @@
 
     #date {
       font-size: 28px;
-      margin-bottom: 5px; /* 날짜와 시계 사이 간격 줄임 */
+      margin-top: 20px; /* 날짜가 상단에 딱 붙지 않도록 */
+      margin-bottom: 10px; /* 날짜와 시계 사이 간격 */
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
-      text-align: center; /* 날짜 가운데 정렬 */
+      text-align: center;
     }
 
     .clock-inner {
@@ -45,7 +46,7 @@
     }
 
     #time {
-      font-size: 220px; /* 시계 크기 조정 */
+      font-size: 220px;
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
       font-variant-numeric: tabular-nums;
@@ -61,12 +62,9 @@
       font-size: 28px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
-      text-align: right;
-      margin-top: 0px; /* 초와 분 사이 간격 조정 */
-      flex-shrink: 0;
-      min-width: 50px;
-      margin-left: calc(100% - 75px); /* 초가 분과 오른쪽 끝에 맞춰지도록 수정 */
-      overflow: visible;
+      margin-top: 0px;
+      align-self: flex-end;
+      margin-right: 0;
     }
 
     #memo {
@@ -111,13 +109,8 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center; /* 가운데 정렬 */
-        padding-left: 5px; /* 왼쪽 마진 */
-      }
-
-      #date {
-        position: absolute;
-        top: 10px; /* 가로모드에서 날짜 상단에 고정 */
+        align-items: center;
+        padding-left: 5px;
       }
 
       #memo {
@@ -130,7 +123,7 @@
 </head>
 <body>
   <div id="clock-container">
-    <div id="date"></div> <!-- 날짜 추가 -->
+    <div id="date"></div>
     <div class="clock-inner">
       <span id="time"></span>
       <span id="seconds"></span>
