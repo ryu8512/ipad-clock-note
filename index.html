@@ -32,25 +32,27 @@
 
     .clock-inner {
       display: inline-flex;
-      align-items: baseline; /* 시:분과 초를 아래 정렬 */
+      align-items: baseline;
       justify-content: center;
     }
 
     #time {
-      font-size: 90px;
+      font-size: 190px;
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
       font-variant-numeric: tabular-nums;
       display: inline-block;
       text-align: right;
+      width: 410px; /* 시:분 고정폭 */
     }
 
     #seconds {
-      font-size: 14px;
+      font-size: 28px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
       display: inline-block;
       margin-left: 4px;
+      width: 50px; /* 초 고정폭 */
     }
 
     #memo {
@@ -93,13 +95,9 @@
       #clock-container {
         flex: 7;
         display: flex;
-        justify-content: center; /* 정확한 중앙정렬 */
+        justify-content: center;
         align-items: center;
         padding-left: 0;
-      }
-
-      #time {
-        font-size: 190px;
       }
 
       #memo {
