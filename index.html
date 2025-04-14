@@ -166,11 +166,10 @@
 
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
-  <!-- Firebase SDK -->
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -185,16 +184,32 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const database = getDatabase();
 
-    // 메모 저장하기
-    function saveMemoToFirebase(memoContent) {
-      const memoRef = ref(db, 'memo/'); // Firebase에 저장할 경로
+    // 메모를 Firebase에 저장하는 함수
+    function saveMemoToFirebase(memo) {
+      const memoRef = ref(database, 'memo/');  // memo라는 경로에 저장
       set(memoRef, {
-        content: memoContent
+        text: memo
       });
     }
 
+    // Firebase에서 메모를 불러오는 함수
+    function loadMemoFromFirebase() {
+      const dbRef = ref(database);
+      get(child(dbRef, 'memo/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          const memo = snapshot.val().text;
+          document.getElementById('memo').value = memo;
+        } else {
+          console.log("No data available");
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+
+    // 시계 업데이트 함수
     function updateClock() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -204,6 +219,7 @@
       document.getElementById('seconds').textContent = seconds;
     }
 
+    // 날짜 업데이트 함수
     function updateDate() {
       const now = new Date();
       const year = now.getFullYear();
@@ -214,19 +230,22 @@
       document.getElementById('date').textContent = `${year}. ${month}. ${day}. ${weekday}`;
     }
 
+    // 페이지 로딩 시 Firebase에서 메모 불러오기
+    window.onload = () => {
+      loadMemoFromFirebase();
+    };
+
+    // 메모 입력 필드와 Firebase 연동
+    const memo = document.getElementById('memo');
+    memo.addEventListener('input', () => {
+      const memoContent = memo.value;
+      saveMemoToFirebase(memoContent);
+    });
+
+    // 시계 1초마다 업데이트
     setInterval(updateClock, 1000);
     updateClock();
     updateDate();
-
-    const memo = document.getElementById('memo');
-    memo.value = localStorage.getItem('memo') || '';
-
-    // 메모 업데이트 시 Firebase와 로컬스토리지에 저장
-    memo.addEventListener('input', () => {
-      const memoContent = memo.value;
-      saveMemoToFirebase(memoContent); // Firebase에 저장
-      localStorage.setItem('memo', memoContent); // 로컬스토리지에 저장
-    });
   </script>
 </body>
 </html>
