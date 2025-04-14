@@ -166,43 +166,7 @@
 
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
-      authDomain: "ipad-clock-memo.firebaseapp.com",
-      databaseURL: "https://ipad-clock-memo-default-rtdb.asia-southeast1.firebasedatabase.app", // 꼭 포함!
-      projectId: "ipad-clock-memo",
-      storageBucket: "ipad-clock-memo.appspot.com",
-      messagingSenderId: "54923892654",
-      appId: "1:54923892654:web:ac3f712f18245490885a3f",
-      measurementId: "G-Y8C288823S"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase();
-
-    function saveMemoToFirebase(memo) {
-      const memoRef = ref(database, 'memo/');
-      set(memoRef, { text: memo });
-    }
-
-    function loadMemoFromFirebase() {
-      const dbRef = ref(database);
-      get(child(dbRef, 'memo/')).then((snapshot) => {
-        if (snapshot.exists()) {
-          const memo = snapshot.val().text;
-          document.getElementById('memo').value = memo;
-        } else {
-          console.log("No memo data.");
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
-    }
-
+  <script>
     function updateClock() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -222,19 +186,15 @@
       document.getElementById('date').textContent = `${year}. ${month}. ${day}. ${weekday}`;
     }
 
-    window.onload = () => {
-      loadMemoFromFirebase();
-    };
-
-    const memo = document.getElementById('memo');
-    memo.addEventListener('input', () => {
-      const memoContent = memo.value;
-      saveMemoToFirebase(memoContent);
-    });
-
     setInterval(updateClock, 1000);
     updateClock();
     updateDate();
+
+    const memo = document.getElementById('memo');
+    memo.value = localStorage.getItem('memo') || '';
+    memo.addEventListener('input', () => {
+      localStorage.setItem('memo', memo.value);
+    });
   </script>
 </body>
 </html>
