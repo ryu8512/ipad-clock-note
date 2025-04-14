@@ -40,28 +40,27 @@
     }
 
     .clock-inner {
-      display: inline-block;
       position: relative;
-      font-variant-numeric: tabular-nums;
+      height: 280px; /* 초가 잘릴 경우 충분한 높이 확보 */
     }
 
     #time {
       font-size: 240px;
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
-      text-align: right;
       display: inline-block;
-      min-width: 440px; /* 숫자 폭 고정 */
+      min-width: 440px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     #seconds {
       position: absolute;
       top: 100%;
-      right: 50px;
-      margin-top: -10px;
+      right: 0;
+      margin-top: -20px;
       font-size: 32px;
       font-family: 'Orbitron', sans-serif;
-      text-align: right;
       font-variant-numeric: tabular-nums;
     }
 
@@ -107,18 +106,18 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items: flex-end;
+        padding-right: 20px;
         overflow: hidden;
       }
 
       #date {
-        position: relative;
         margin-bottom: 10px;
       }
 
       .clock-inner {
-        max-width: 100%;
-        overflow: hidden;
+        width: 100%;
+        text-align: right;
       }
 
       #memo {
