@@ -26,9 +26,14 @@
     }
 
     #clock-container {
-      margin-top: 100px;
       text-align: center;
       height: auto;
+    }
+
+    .clock-inner {
+      display: inline-flex;
+      align-items: baseline; /* 시:분과 초를 아래 정렬 */
+      justify-content: center;
     }
 
     #time {
@@ -37,9 +42,7 @@
       transform: scaleX(0.9);
       font-variant-numeric: tabular-nums;
       display: inline-block;
-      width: 320px;
       text-align: right;
-      vertical-align: baseline;
     }
 
     #seconds {
@@ -47,10 +50,7 @@
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
       display: inline-block;
-      width: 40px;
-      text-align: left;
-      vertical-align: baseline;
-      margin-left: 2px;
+      margin-left: 4px;
     }
 
     #memo {
@@ -91,11 +91,11 @@
       }
 
       #clock-container {
-        flex: 7; /* 7:3 비율 */
+        flex: 7;
         display: flex;
-        justify-content: flex-start; /* 왼쪽 정렬 */
+        justify-content: center; /* 정확한 중앙정렬 */
         align-items: center;
-        padding-left: 5px; /* 왼쪽 margin 최소화 */
+        padding-left: 0;
       }
 
       #time {
@@ -112,7 +112,9 @@
 </head>
 <body>
   <div id="clock-container">
-    <span id="time"></span><span id="seconds"></span>
+    <div class="clock-inner">
+      <span id="time"></span><span id="seconds"></span>
+    </div>
   </div>
 
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
