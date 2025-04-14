@@ -31,39 +31,37 @@
     }
 
     #date {
-      font-size: 28px;
-      margin-bottom: 10px; /* 날짜와 시계 간격 */
+      font-size: 28px;            /* 1. 달력의 폰트 크기 */
+      margin-bottom: 10px;        /* 2. 달력과 시계의 margin */
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
       text-align: center;
     }
 
     .clock-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      position: relative; /* 초의 위치 기준 */
+      display: inline-block;
+      position: relative;         /* 초 위치 기준 */
+      font-variant-numeric: tabular-nums;
     }
 
     #time {
-      font-size: 220px;
+      font-size: 220px;           /* 3. 시계의 폰트 크기 */
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
-      font-variant-numeric: tabular-nums;
       text-align: right;
-      flex-shrink: 1;
-      max-width: 100%;
+      display: inline-block;
+      min-width: 430px;           /* 숫자 폭 흔들림 방지 */
     }
 
     #seconds {
       position: absolute;
-      right: 0;
       top: 100%;
-      margin-top: 4px; /* 초와 분 사이 간격 조절 */
+      right: 0;                   /* 5. 초의 위치 세부조정 (← 여기서 조절) */
+      margin-top: 4px;            /* 4. 시계와 초의 margin */
       font-size: 28px;
       font-family: 'Orbitron', sans-serif;
-      font-variant-numeric: tabular-nums;
       text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     #memo {
@@ -115,7 +113,7 @@
       #date {
         position: relative;
         top: 0;
-        margin-bottom: 10px; /* 가로 모드에서 날짜와 시계 간격 */
+        margin-bottom: 10px;
       }
 
       #memo {
