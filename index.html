@@ -30,14 +30,21 @@
       height: auto;
     }
 
+    #date {
+      font-size: 28px;
+      margin-bottom: 20px; /* 날짜와 시계 사이 간격 조절 */
+      font-family: 'Orbitron', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
     .clock-inner {
       display: inline-flex;
-      align-items: baseline;
-      justify-content: flex-start;
+      flex-direction: column;
+      align-items: flex-end;
     }
 
     #time {
-      font-size: 220px;
+      font-size: 220px; /* 시계 크기 조절 */
       font-family: 'Orbitron', sans-serif;
       transform: scaleX(0.9);
       font-variant-numeric: tabular-nums;
@@ -49,11 +56,13 @@
     }
 
     #seconds {
+      display: block;
       font-size: 28px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
-      display: inline-block;
-      margin-left: 4px;
+      text-align: right;
+      margin-left: auto;
+      margin-top: 10px; /* 초와 분 사이 간격 조절 */
       flex-shrink: 0;
       min-width: 50px;
       overflow: visible;
@@ -73,7 +82,7 @@
     @media (orientation: portrait) {
       body {
         flex-direction: column;
-        padding: 5px;
+        padding: 10px;
       }
 
       #clock-container {
@@ -99,9 +108,10 @@
       #clock-container {
         flex: 7;
         display: flex;
-        justify-content: flex-start; /* 왼쪽 정렬 */
-        align-items: center;
-        padding-left: 40px; /* 원하는 만큼 조절 가능 */
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 5px; /* 왼쪽 마진 */
       }
 
       #memo {
@@ -114,8 +124,10 @@
 </head>
 <body>
   <div id="clock-container">
+    <div id="date"></div>
     <div class="clock-inner">
-      <span id="time"></span><span id="seconds"></span>
+      <span id="time"></span>
+      <span id="seconds"></span>
     </div>
   </div>
 
@@ -131,8 +143,19 @@
       document.getElementById('seconds').textContent = seconds;
     }
 
+    function updateDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const weekday = weekdays[now.getDay()];
+      document.getElementById('date').textContent = `${year}. ${month}. ${day}. ${weekday}`;
+    }
+
     setInterval(updateClock, 1000);
     updateClock();
+    updateDate();
 
     const memo = document.getElementById('memo');
     memo.value = localStorage.getItem('memo') || '';
