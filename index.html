@@ -34,6 +34,7 @@
       display: inline-flex;
       align-items: baseline;
       justify-content: center;
+      width: 500px; /* 전체 시계 영역 고정 */
     }
 
     #time {
@@ -43,7 +44,8 @@
       font-variant-numeric: tabular-nums;
       display: inline-block;
       text-align: right;
-      width: 410px; /* 시:분 고정폭 */
+      flex-shrink: 0;
+      width: 420px; /* 시:분 고정 폭 */
     }
 
     #seconds {
@@ -52,7 +54,8 @@
       font-variant-numeric: tabular-nums;
       display: inline-block;
       margin-left: 4px;
-      width: 50px; /* 초 고정폭 */
+      flex-shrink: 0;
+      width: 50px; /* 초 고정 폭 */
     }
 
     #memo {
