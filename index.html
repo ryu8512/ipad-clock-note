@@ -166,6 +166,67 @@
 
   <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
+  <!-- Firebase SDK 코드 시작 -->
+  <script type="module">
+    // Firebase SDK import
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
+      authDomain: "ipad-clock-memo.firebaseapp.com",
+      projectId: "ipad-clock-memo",
+      storageBucket: "ipad-clock-memo.firebasestorage.app",
+      messagingSenderId: "54923892654",
+      appId: "1:54923892654:web:ac3f712f18245490885a3f",
+      measurementId: "G-Y8C288823S"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // 메모 데이터 저장하기
+    function saveMemoToFirebase(memo) {
+      const memoRef = ref(db, 'memo/');
+      set(memoRef, {
+        content: memo
+      }).then(() => {
+        console.log("메모가 저장되었습니다.");
+      }).catch((error) => {
+        console.error("메모 저장 중 오류 발생: ", error);
+      });
+    }
+
+    // 메모 불러오기
+    function loadMemoFromFirebase() {
+      const memoRef = ref(db, 'memo/');
+      get(memoRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById('memo').value = data.content; // 메모 textarea에 내용 표시
+        } else {
+          console.log("메모 데이터가 없습니다.");
+        }
+      }).catch((error) => {
+        console.error("메모 불러오기 중 오류 발생: ", error);
+      });
+    }
+
+    // 메모가 입력될 때마다 Firebase에 저장
+    const memoElement = document.getElementById('memo');
+    memoElement.addEventListener('input', () => {
+      saveMemoToFirebase(memoElement.value);
+    });
+
+    // 페이지 로드 시 Firebase에서 메모 불러오기
+    window.onload = function() {
+      loadMemoFromFirebase();
+    };
+  </script>
+  <!-- Firebase SDK 코드 끝 -->
+
   <script>
     function updateClock() {
       const now = new Date();
@@ -189,12 +250,6 @@
     setInterval(updateClock, 1000);
     updateClock();
     updateDate();
-
-    const memo = document.getElementById('memo');
-    memo.value = localStorage.getItem('memo') || '';
-    memo.addEventListener('input', () => {
-      localStorage.setItem('memo', memo.value);
-    });
   </script>
 </body>
 </html>
