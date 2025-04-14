@@ -29,6 +29,7 @@
     #clock-container {
       text-align: center;
       height: auto;
+      position: relative; /* 추가: clock container에 상대 위치 지정 */
     }
 
     #date {
@@ -62,6 +63,7 @@
       font-size: 32px;
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
+      z-index: 1; /* 초가 시계 뒤에 가려지지 않게 설정 */
     }
 
     #memo {
