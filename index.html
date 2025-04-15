@@ -34,8 +34,8 @@
       position: absolute;
       top: 20px;
       left: 20px;
-      font-size: 3.5vw;
-      background: transparent;
+      font-size: 2.5vw;
+      background: #222;
       color: white;
       border: none;
       border-radius: 5px;
@@ -92,6 +92,25 @@
       line-height: 1.5;
     }
 
+    .toolbar {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .toolbar select, .toolbar button {
+      background-color: #222;
+      color: white;
+      border: 1px solid #333;
+      padding: 5px 10px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .toolbar button {
+      font-weight: bold;
+    }
+
     @media screen and (orientation: portrait) {
       body {
         flex-direction: column;
@@ -135,11 +154,30 @@
     <div id="time"></div>
     <div id="seconds"></div>
   </div>
+
   <div id="memo-container">
-    <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
+    <!-- 툴바 UI 추가 -->
+    <div class="toolbar">
+      <select id="fontSize">
+        <option value="14">폰트 크기 14</option>
+        <option value="18">폰트 크기 18</option>
+        <option value="22">폰트 크기 22</option>
+      </select>
+      <button id="boldButton">B</button>
+      <select id="colorPicker">
+        <option value="red">빨강</option>
+        <option value="blue">파랑</option>
+        <option value="green">초록</option>
+        <option value="yellow">노랑</option>
+      </select>
+    </div>
+
+    <!-- 내용 편집 가능한 div -->
+    <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   </div>
 
   <script>
+    // 시계 업데이트 함수
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -159,10 +197,28 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // 메모의 로컬스토리지 저장
     const memo = document.getElementById('memo');
-    memo.value = localStorage.getItem('memo') || '';
+    memo.innerHTML = localStorage.getItem('memo') || '';
     memo.addEventListener('input', () => {
-      localStorage.setItem('memo', memo.value);
+      localStorage.setItem('memo', memo.innerHTML);
+    });
+
+    // 폰트 크기 변경
+    document.getElementById('fontSize').addEventListener('change', (e) => {
+      const fontSize = e.target.value;
+      document.execCommand('fontSize', false, fontSize);
+    });
+
+    // 볼드체 적용
+    document.getElementById('boldButton').addEventListener('click', () => {
+      document.execCommand('bold');
+    });
+
+    // 색상 변경
+    document.getElementById('colorPicker').addEventListener('change', (e) => {
+      const color = e.target.value;
+      document.execCommand('foreColor', false, color);
     });
   </script>
 </body>
