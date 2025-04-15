@@ -30,6 +30,20 @@
       flex-direction: row;
     }
 
+    #refresh-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.5vw;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
     #clock-container {
       flex: 7;
       display: flex;
@@ -56,8 +70,8 @@
       font-size: var(--seconds-font-size);
       margin-top: 10px;
       font-variant-numeric: tabular-nums;
-      align-self: flex-end; /* 이 줄을 추가 */
-      margin-right: 70px;   /* 오른쪽 여백도 같이 조절 */
+      align-self: flex-end;
+      margin-right: 70px;
     }
 
     #memo-container {
@@ -114,6 +128,8 @@
   </style>
 </head>
 <body>
+  <button id="refresh-button" onclick="location.reload()">⟳</button>
+
   <div id="clock-container">
     <div id="date"></div>
     <div id="time"></div>
