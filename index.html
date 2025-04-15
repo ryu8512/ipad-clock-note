@@ -49,6 +49,14 @@
       border: none; resize: none; outline: none;
       padding: 10px; line-height: 1.5;
     }
+
+    /* 이 부분이 핵심: memo 내부 span 포함한 모든 요소에 동일한 렌더링 스타일 적용 */
+    #memo * {
+      font-family: Arial, sans-serif !important;
+      line-height: 1.5 !important;
+      vertical-align: baseline !important;
+    }
+
     .toolbar {
       display: flex; justify-content: center;
       margin-bottom: 10px; gap: 10px; flex-wrap: wrap;
@@ -190,11 +198,6 @@
       span.style.fontSize = fontSizeSelect.value + 'px';
       span.style.color = colorSelect.value;
       span.style.fontWeight = boldButton.classList.contains('active') ? 'bold' : 'normal';
-
-      // 기본 스타일 강제 지정
-      span.style.fontFamily = 'Arial, sans-serif';
-      span.style.lineHeight = '1.5';
-      span.style.verticalAlign = 'baseline';
 
       span.textContent = selectedText;
 
