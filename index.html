@@ -3,202 +3,212 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clock & Memo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <title>Clock + Memo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ClockMemo">
   <style>
-    body {
-      margin: 0;
-      background-color: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+    :root {
+      --clock-font-size: 20vw;
+      --seconds-font-size: 2vw;
+      --date-font-size: 4vw;
     }
-
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background-color: black; color: white;
+      font-family: 'Orbitron', sans-serif;
+    }
+    body { display: flex; flex-direction: row; }
+    #refresh-button {
+      position: absolute; top: 20px; left: 20px;
+      font-size: 2rem; background: transparent; color: white;
+      border: none; padding: 5px 10px; cursor: pointer; z-index: 1000;
+    }
     #clock-container {
-      text-align: center;
-      padding: 10px 0;
+      flex: 7; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-right: 1px solid #333; overflow: hidden;
     }
-
-    #date {
-      font-family: Orbitron, sans-serif;
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-
+    #date { font-size: var(--date-font-size); margin-bottom: 20px; text-align: center; }
     #time {
-      font-family: Orbitron, sans-serif;
-      font-size: 48px;
-      font-variant-numeric: tabular-nums;
-      display: inline-block;
-      width: 170px;
+      font-size: var(--clock-font-size);
+      font-variant-numeric: tabular-nums; line-height: 1;
     }
-
     #seconds {
-      font-family: Orbitron, sans-serif;
-      font-size: 20px;
-      vertical-align: baseline;
+      font-size: var(--seconds-font-size);
+      margin-top: 10px; font-variant-numeric: tabular-nums;
+      align-self: flex-end; margin-right: 80px;
     }
-
-    #controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    select, button {
-      background-color: black;
-      color: white;
-      border: none;
-      font-size: 14px;
-    }
-
+    #memo-container { flex: 3; padding: 10px; }
     #memo {
-      flex-grow: 1;
-      padding: 10px;
-      outline: none;
-      overflow-y: auto;
-      font-size: 14px;
       font-family: Arial, sans-serif;
-      line-height: 1.4;
-      color: white;
+      width: 100%; height: 100%; font-size: 14px;
+      background-color: #111; color: white;
+      border: none; resize: none; outline: none;
+      padding: 10px; line-height: 1.5;
     }
-
-    #memo * {
-      font-size: inherit !important;
-      font-family: inherit !important;
-      line-height: inherit !important;
-      color: inherit !important;
+    .toolbar {
+      display: flex; justify-content: center;
+      margin-bottom: 10px; gap: 10px; flex-wrap: wrap;
     }
-
-    #footer {
-      text-align: center;
-      font-size: 12px;
-      padding: 5px;
-      color: gray;
+    .toolbar select, .toolbar button {
+      background: none; color: white;
+      border: none; padding: 5px 8px;
+      font-size: 1.2rem; font-weight: bold; cursor: pointer;
     }
-
-    @media (orientation: landscape) {
-      body {
-        flex-direction: row;
-      }
-
+    .toolbar button.active {
+      background-color: white; color: black; border-radius: 4px;
+    }
+    .toolbar select option {
+      background-color: black; color: white;
+    }
+    @media screen and (orientation: portrait) {
+      body { flex-direction: column; }
       #clock-container {
-        width: 70%;
-        border-right: 1px solid #444;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        flex: none; height: 20%;
+        border-right: none; border-bottom: 1px solid #333;
       }
-
-      #right-side {
-        width: 30%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      #controls {
-        padding: 10px;
-      }
-
-      #memo {
-        height: 100%;
-      }
-
-      #footer {
-        padding: 5px;
+      #memo-container { flex: none; height: 80%; }
+      #date { font-size: 4vw; }
+      #time { font-size: 12vw; }
+      #seconds { display: none; }
+      #memo { font-size: 4vw; }
+      .toolbar select, .toolbar button {
+        font-size: 4vw; padding: 10px 0;
       }
     }
   </style>
 </head>
 <body>
+  <button id="refresh-button" onclick="location.reload()">⟳</button>
+
   <div id="clock-container">
     <div id="date"></div>
-    <div>
-      <span id="time"></span><span id="seconds"></span>
-    </div>
-    <div>
-      <button onclick="location.reload()">↻</button>
-    </div>
+    <div id="time"></div>
+    <div id="seconds"></div>
   </div>
 
-  <div id="right-side">
-    <div id="controls">
-      <label>Font
-        <select id="fontSize" onchange="changeFontSize(this.value)">
-          <option value="12px">12px</option>
-          <option value="14px" selected>14px</option>
-          <option value="16px">16px</option>
-          <option value="18px">18px</option>
-          <option value="20px">20px</option>
-        </select>
-      </label>
-
-      <label>White
-        <select id="fontColor" onchange="changeFontColor(this.value)">
-          <option value="white" selected>White</option>
-          <option value="red">Red</option>
-          <option value="yellow">Yellow</option>
-          <option value="blue">Blue</option>
-        </select>
-      </label>
-
-      <button onclick="toggleBold()">B</button>
+  <div id="memo-container">
+    <div class="toolbar">
+      <select id="fontSize">
+        <option value="9">Font 9px</option>
+        <option value="10">Font 10px</option>
+        <option value="11">Font 11px</option>
+        <option value="12">Font 12px</option>
+        <option value="13">Font 13px</option>
+        <option value="14" selected>Font 14px</option>
+        <option value="15">Font 15px</option>
+        <option value="16">Font 16px</option>
+        <option value="17">Font 17px</option>
+        <option value="18">Font 18px</option>
+        <option value="19">Font 19px</option>
+        <option value="20">Font 20px</option>
+      </select>
+      <select id="colorPicker">
+        <option value="white">White</option>
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="yellow">Yellow</option>
+      </select>
+      <button id="boldButton">B</button>
     </div>
-
-    <div id="memo" contenteditable="true"></div>
-
-    <div id="footer">ryu8512.github.io</div>
+    <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
-    // 시계 업데이트
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
+      authDomain: "ipad-clock-memo.firebaseapp.com",
+      databaseURL: "https://ipad-clock-memo-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ipad-clock-memo",
+      storageBucket: "ipad-clock-memo.appspot.com",
+      messagingSenderId: "54923892654",
+      appId: "1:54923892654:web:ac3f712f18245490885a3f",
+      measurementId: "G-Y8C288823S"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const memoRef = db.ref("memo");
+
+    // 시계
     function updateClock() {
       const now = new Date();
-      const date = now.toISOString().split("T")[0].replace(/-/g, ".") + '.' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][now.getDay()];
-      document.getElementById("date").textContent = date;
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const date = String(now.getDate()).padStart(2, '0');
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const day = dayNames[now.getDay()];
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
 
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-
-      document.getElementById("time").textContent = `${hours}:${minutes}`;
-      document.getElementById("seconds").textContent = seconds;
+      document.getElementById('date').textContent = `${year}.${month}.${date}.${day}`;
+      document.getElementById('time').textContent = `${hours}:${minutes}`;
+      document.getElementById('seconds').textContent = seconds;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 저장/불러오기
-    const memo = document.getElementById("memo");
-    memo.innerHTML = localStorage.getItem("memo") || "";
-    memo.addEventListener("input", () => {
-      localStorage.setItem("memo", memo.innerHTML);
+    // 메모 요소들
+    const memo = document.getElementById('memo');
+    const fontSizeSelect = document.getElementById('fontSize');
+    const colorSelect = document.getElementById('colorPicker');
+    const boldButton = document.getElementById('boldButton');
+
+    // 메모 저장 함수
+    function saveMemo() {
+      memoRef.set(memo.innerHTML);
+      localStorage.setItem('memo', memo.innerHTML);
+    }
+
+    // 초기 데이터 로딩
+    memoRef.on('value', (snapshot) => {
+      const value = snapshot.val();
+      if (value !== null && value !== memo.innerHTML) {
+        memo.innerHTML = value;
+      }
     });
 
-    // 스타일 변경 함수
-    function changeFontSize(size) {
-      document.execCommand("fontSize", false, "7");
-      const fontElements = document.getElementsByTagName("font");
-      for (let i = 0; i < fontElements.length; i++) {
-        if (fontElements[i].size === "7") {
-          fontElements[i].removeAttribute("size");
-          fontElements[i].style.fontSize = size;
-        }
-      }
+    memo.addEventListener('input', saveMemo);
+
+    // 스타일 적용 함수
+    function applyStyle() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      if (!selectedText) return;
+
+      const span = document.createElement('span');
+      span.style.fontSize = fontSizeSelect.value + 'px';
+      span.style.color = colorSelect.value;
+      span.style.fontWeight = boldButton.classList.contains('active') ? 'bold' : 'normal';
+
+      // 기본 스타일 강제 지정
+      span.style.fontFamily = 'Arial, sans-serif';
+      span.style.lineHeight = '1.5';
+      span.style.verticalAlign = 'baseline';
+
+      span.textContent = selectedText;
+
+      range.deleteContents();
+      range.insertNode(span);
+      saveMemo();
     }
 
-    function changeFontColor(color) {
-      document.execCommand("foreColor", false, color);
-    }
-
-    function toggleBold() {
-      document.execCommand("bold", false, null);
-    }
+    fontSizeSelect.addEventListener('change', applyStyle);
+    colorSelect.addEventListener('change', applyStyle);
+    boldButton.addEventListener('click', () => {
+      boldButton.classList.toggle('active');
+      applyStyle();
+    });
   </script>
 </body>
 </html>
