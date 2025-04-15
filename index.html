@@ -38,7 +38,6 @@
       background: transparent;
       color: white;
       border: none;
-      border-radius: 5px;
       padding: 5px 10px;
       cursor: pointer;
       z-index: 1000;
@@ -96,17 +95,17 @@
       display: flex;
       justify-content: flex-start;
       margin-bottom: 10px;
+      gap: 10px;
     }
 
-    .toolbar select,
-    .toolbar button {
-      background-color: transparent;
-      border: none;
+    .toolbar select, .toolbar button {
+      background: none;
       color: white;
-      font-size: 1.6rem;
+      border: none;
+      font-size: 1vw;
       font-weight: bold;
       cursor: pointer;
-      margin-right: 15px;
+      padding: 5px 0;
     }
 
     @media screen and (orientation: portrait) {
@@ -141,6 +140,11 @@
       #memo {
         font-size: 4vw;
       }
+
+      .toolbar select, .toolbar button {
+        font-size: 4vw;
+        padding: 10px 0;
+      }
     }
   </style>
 </head>
@@ -154,23 +158,16 @@
   </div>
 
   <div id="memo-container">
+    <!-- 툴바 UI -->
     <div class="toolbar">
       <select id="fontSize">
-        <option value="10">폰트 크기 10</option>
-        <option value="11">폰트 크기 11</option>
-        <option value="12">폰트 크기 12</option>
-        <option value="13">폰트 크기 13</option>
-        <option value="14">폰트 크기 14</option>
-        <option value="15">폰트 크기 15</option>
-        <option value="16">폰트 크기 16</option>
-        <option value="17">폰트 크기 17</option>
-        <option value="18">폰트 크기 18</option>
-        <option value="19">폰트 크기 19</option>
-        <option value="20">폰트 크기 20</option>
-        <option value="21">폰트 크기 21</option>
-        <option value="22">폰트 크기 22</option>
-        <option value="23">폰트 크기 23</option>
-        <option value="24">폰트 크기 24</option>
+        <option value="1">폰트크기 10</option>
+        <option value="2">폰트크기 13</option>
+        <option value="3">폰트크기 16</option>
+        <option value="4">폰트크기 18</option>
+        <option value="5">폰트크기 24</option>
+        <option value="6">폰트크기 32</option>
+        <option value="7">폰트크기 48</option>
       </select>
       <button id="boldButton">B</button>
       <select id="colorPicker">
@@ -206,28 +203,26 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 저장
+    // 메모 로컬스토리지
     const memo = document.getElementById('memo');
     memo.innerHTML = localStorage.getItem('memo') || '';
     memo.addEventListener('input', () => {
       localStorage.setItem('memo', memo.innerHTML);
     });
 
-    // 폰트 크기 변경
+    // 폰트 크기
     document.getElementById('fontSize').addEventListener('change', (e) => {
-      const fontSize = e.target.value;
-      document.execCommand('fontSize', false, fontSize);
+      document.execCommand('fontSize', false, e.target.value);
     });
 
-    // 볼드 적용
+    // 볼드체
     document.getElementById('boldButton').addEventListener('click', () => {
       document.execCommand('bold');
     });
 
-    // 색상 적용
+    // 색상
     document.getElementById('colorPicker').addEventListener('change', (e) => {
-      const color = e.target.value;
-      document.execCommand('foreColor', false, color);
+      document.execCommand('foreColor', false, e.target.value);
     });
   </script>
 </body>
