@@ -14,154 +14,69 @@
       --seconds-font-size: 2vw;
       --date-font-size: 4vw;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: black;
-      color: white;
+      margin: 0; padding: 0; height: 100%;
+      background-color: black; color: white;
       font-family: 'Orbitron', sans-serif;
     }
-
-    body {
-      display: flex;
-      flex-direction: row;
-    }
-
+    body { display: flex; flex-direction: row; }
     #refresh-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 2rem;
-      background: transparent;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      z-index: 1000;
+      position: absolute; top: 20px; left: 20px;
+      font-size: 2rem; background: transparent; color: white;
+      border: none; padding: 5px 10px; cursor: pointer; z-index: 1000;
     }
-
     #clock-container {
-      flex: 7;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid #333;
-      overflow: hidden;
+      flex: 7; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-right: 1px solid #333; overflow: hidden;
     }
-
-    #date {
-      font-size: var(--date-font-size);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
+    #date { font-size: var(--date-font-size); margin-bottom: 20px; text-align: center; }
     #time {
       font-size: var(--clock-font-size);
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
+      font-variant-numeric: tabular-nums; line-height: 1;
     }
-
     #seconds {
       font-size: var(--seconds-font-size);
-      margin-top: 10px;
-      font-variant-numeric: tabular-nums;
-      align-self: flex-end;
-      margin-right: 80px;
+      margin-top: 10px; font-variant-numeric: tabular-nums;
+      align-self: flex-end; margin-right: 80px;
     }
-
-    #memo-container {
-      flex: 3;
-      padding: 10px;
-    }
-
+    #memo-container { flex: 3; padding: 10px; }
     #memo {
       font-family: Arial, sans-serif;
-      width: 100%;
-      height: 100%;
-      font-size: 1.2vw;
-      background-color: #111;
-      color: white;
-      border: none;
-      resize: none;
-      outline: none;
-      padding: 10px;
-      line-height: 1.5;
+      width: 100%; height: 100%; font-size: 1.2vw;
+      background-color: #111; color: white;
+      border: none; resize: none; outline: none;
+      padding: 10px; line-height: 1.5;
     }
-
     .toolbar {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-      gap: 10px;
-      flex-wrap: wrap;
+      display: flex; justify-content: center;
+      margin-bottom: 10px; gap: 10px; flex-wrap: wrap;
     }
-
-    .toolbar select,
-    .toolbar button {
-      background: none;
-      color: white;
-      border: none;
-      padding: 5px 8px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
+    .toolbar select, .toolbar button {
+      background: none; color: white;
+      border: none; padding: 5px 8px;
+      font-size: 1.2rem; font-weight: bold; cursor: pointer;
     }
-
     .toolbar button.active {
-      background-color: white;
-      color: black;
-      border-radius: 4px;
+      background-color: white; color: black; border-radius: 4px;
     }
-
     .toolbar select option {
-      background-color: black;
-      color: white;
+      background-color: black; color: white;
     }
-
     @media screen and (orientation: portrait) {
-      body {
-        flex-direction: column;
-      }
-
+      body { flex-direction: column; }
       #clock-container {
-        flex: none;
-        height: 20%;
-        border-right: none;
-        border-bottom: 1px solid #333;
+        flex: none; height: 20%;
+        border-right: none; border-bottom: 1px solid #333;
       }
-
-      #memo-container {
-        flex: none;
-        height: 80%;
-      }
-
-      #date {
-        font-size: 4vw;
-      }
-
-      #time {
-        font-size: 12vw;
-      }
-
-      #seconds {
-        display: none;
-      }
-
-      #memo {
-        font-size: 4vw;
-      }
-
-      .toolbar select,
-      .toolbar button {
-        font-size: 4vw;
-        padding: 10px 0;
+      #memo-container { flex: none; height: 80%; }
+      #date { font-size: 4vw; }
+      #time { font-size: 12vw; }
+      #seconds { display: none; }
+      #memo { font-size: 4vw; }
+      .toolbar select, .toolbar button {
+        font-size: 4vw; padding: 10px 0;
       }
     }
   </style>
@@ -200,11 +115,28 @@
       </select>
       <button id="boldButton">B</button>
     </div>
-
     <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
+      authDomain: "ipad-clock-memo.firebaseapp.com",
+      databaseURL: "https://ipad-clock-memo-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ipad-clock-memo",
+      storageBucket: "ipad-clock-memo.firebasestorage.app",
+      messagingSenderId: "54923892654",
+      appId: "1:54923892654:web:ac3f712f18245490885a3f",
+      measurementId: "G-Y8C288823S"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const memoRef = db.ref("memo");
+
     // 시계
     function updateClock() {
       const now = new Date();
@@ -221,18 +153,28 @@
       document.getElementById('time').textContent = `${hours}:${minutes}`;
       document.getElementById('seconds').textContent = seconds;
     }
-
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 저장
+    // 메모
     const memo = document.getElementById('memo');
-    memo.innerHTML = localStorage.getItem('memo') || '';
-    memo.addEventListener('input', () => {
-      localStorage.setItem('memo', memo.innerHTML);
+
+    // Firebase로부터 불러오기
+    memoRef.on('value', (snapshot) => {
+      const value = snapshot.val();
+      if (value !== null && value !== memo.innerHTML) {
+        memo.innerHTML = value;
+      }
     });
 
-    // 툴바 기능
+    // Firebase에 저장
+    memo.addEventListener('input', () => {
+      const content = memo.innerHTML;
+      localStorage.setItem('memo', content);
+      memoRef.set(content);
+    });
+
+    // 툴바
     document.getElementById('fontSize').addEventListener('change', (e) => {
       document.execCommand('fontSize', false, e.target.value);
     });
@@ -240,7 +182,6 @@
     const boldButton = document.getElementById('boldButton');
     boldButton.addEventListener('click', () => {
       document.execCommand('bold');
-      // 상태 체크: 눌림 상태를 명확하게 표시
       const isBold = document.queryCommandState('bold');
       boldButton.classList.toggle('active', isBold);
     });
