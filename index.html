@@ -98,17 +98,15 @@
       margin-bottom: 10px;
     }
 
-    .toolbar select, .toolbar button {
-      background-color: #222;
-      color: white;
-      border: 1px solid #333;
-      padding: 5px 10px;
-      margin-right: 10px;
-      cursor: pointer;
-    }
-
+    .toolbar select,
     .toolbar button {
+      background-color: transparent;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
       font-weight: bold;
+      cursor: pointer;
+      margin-right: 15px;
     }
 
     @media screen and (orientation: portrait) {
@@ -156,7 +154,6 @@
   </div>
 
   <div id="memo-container">
-    <!-- 툴바 UI 추가 -->
     <div class="toolbar">
       <select id="fontSize">
         <option value="10">폰트 크기 10</option>
@@ -185,12 +182,11 @@
       </select>
     </div>
 
-    <!-- 내용 편집 가능한 div -->
     <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   </div>
 
   <script>
-    // 시계 업데이트 함수
+    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -210,7 +206,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모의 로컬스토리지 저장
+    // 메모 저장
     const memo = document.getElementById('memo');
     memo.innerHTML = localStorage.getItem('memo') || '';
     memo.addEventListener('input', () => {
@@ -223,12 +219,12 @@
       document.execCommand('fontSize', false, fontSize);
     });
 
-    // 볼드체 적용
+    // 볼드 적용
     document.getElementById('boldButton').addEventListener('click', () => {
       document.execCommand('bold');
     });
 
-    // 색상 변경
+    // 색상 적용
     document.getElementById('colorPicker').addEventListener('change', (e) => {
       const color = e.target.value;
       document.execCommand('foreColor', false, color);
