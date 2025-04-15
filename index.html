@@ -1,175 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clock & Memo</title>
+  <title>Clock + Memo</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
-
-  <!-- 캐시 방지 메타 태그 -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-
   <style>
+    :root {
+      --clock-font-size: 8vw;
+      --seconds-font-size: 3vw;
+      --date-font-size: 2vw;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
       background-color: black;
       color: white;
       font-family: 'Orbitron', sans-serif;
-      height: 100%;
-      width: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: row;
+    }
+
+    #clock-container {
+      flex: 7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid #333;
       overflow: hidden;
     }
 
-    #container {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
+    #date {
+      font-size: var(--date-font-size);
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    /* 가로 모드 */
-    @media (orientation: landscape) {
-      #container {
-        flex-direction: row;
+    #time {
+      font-size: var(--clock-font-size);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    #seconds {
+      font-size: var(--seconds-font-size);
+      margin-top: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #memo-container {
+      flex: 3;
+      padding: 10px;
+    }
+
+    #memo {
+      width: 100%;
+      height: 100%;
+      font-size: 1.2vw;
+      background-color: #111;
+      color: white;
+      border: none;
+      resize: none;
+      outline: none;
+      padding: 10px;
+      line-height: 1.5;
+    }
+
+    @media screen and (orientation: portrait) {
+      body {
+        flex-direction: column;
       }
 
       #clock-container {
-        flex: 7;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        flex: none;
+        height: 30%;
+        border-right: none;
+        border-bottom: 1px solid #333;
       }
 
       #memo-container {
-        flex: 3;
+        flex: none;
+        height: 70%;
+      }
+
+      #date {
+        font-size: 4vw;
       }
 
       #time {
         font-size: 12vw;
-        font-variant-numeric: tabular-nums;
-      }
-
-      #seconds {
-        font-size: 4vw;
-        vertical-align: baseline;
-        font-variant-numeric: tabular-nums;
-      }
-
-      #date {
-        font-size: 3vw;
-        margin-bottom: 10px;
-        text-align: center;
-      }
-    }
-
-    /* 세로 모드 */
-    @media (orientation: portrait) {
-      #clock-container {
-        text-align: center;
-        padding: 20px 0;
-      }
-
-      #date {
-        font-size: 6vw;
-        margin-bottom: 10px;
-        text-align: center;
-      }
-
-      #time {
-        font-size: 18vw;
-        font-variant-numeric: tabular-nums;
       }
 
       #seconds {
         display: none;
       }
 
-      #container {
-        flex-direction: column;
+      #memo {
+        font-size: 4vw;
       }
-
-      #clock-container {
-        flex: 3;
-      }
-
-      #memo-container {
-        flex: 7;
-      }
-    }
-
-    #memo {
-      width: 100%;
-      height: 100%;
-      font-size: 1.2em;
-      background-color: black;
-      color: white;
-      border: none;
-      padding: 10px;
-      box-sizing: border-box;
-      resize: none;
-    }
-
-    #memo:focus {
-      outline: none;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <div id="clock-container">
-      <div id="date"></div>
-      <div>
-        <span id="time"></span>
-        <span id="seconds"></span>
-      </div>
-    </div>
-    <div id="memo-container">
-      <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
-    </div>
+  <div id="clock-container">
+    <div id="date"></div>
+    <div id="time"></div>
+    <div id="seconds"></div>
+  </div>
+  <div id="memo-container">
+    <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
   </div>
 
   <script>
     function updateClock() {
       const now = new Date();
-      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      const seconds = now.toLocaleTimeString('en-GB', { second: '2-digit' });
-      const date = now.toLocaleDateString('en-GB', { year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short' });
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const date = String(now.getDate()).padStart(2, '0');
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const day = dayNames[now.getDay()];
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
 
-      document.getElementById('time').textContent = time;
+      document.getElementById('date').textContent = `${year}.${month}.${date}.${day}`;
+      document.getElementById('time').textContent = `${hours}:${minutes}`;
       document.getElementById('seconds').textContent = seconds;
-      document.getElementById('date').textContent = date.replace(/\//g, '.');
     }
 
-    function saveMemo() {
-      localStorage.setItem('memo', document.getElementById('memo').value);
-    }
-
-    function loadMemo() {
-      const saved = localStorage.getItem('memo');
-      if (saved !== null) {
-        document.getElementById('memo').value = saved;
-      }
-    }
-
-    document.getElementById('memo').addEventListener('input', saveMemo);
-
-    // 시계 업데이트
-    updateClock();
     setInterval(updateClock, 1000);
+    updateClock();
 
-    // 메모 불러오기
-    loadMemo();
-
-    // 강제 새로고침 (홈화면 앱 캐시 우회용)
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-      if (!location.href.includes('?t=')) {
-        location.href = location.pathname + '?t=' + new Date().getTime();
-      }
-    }
+    const memo = document.getElementById('memo');
+    memo.value = localStorage.getItem('memo') || '';
+    memo.addEventListener('input', () => {
+      localStorage.setItem('memo', memo.value);
+    });
   </script>
 </body>
 </html>
