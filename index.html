@@ -107,9 +107,21 @@
       background: none;
       color: white;
       border: none;
+      padding: 5px 8px;
       font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    .toolbar button.active {
+      background-color: white;
+      color: black;
+      border-radius: 4px;
+    }
+
+    .toolbar select option {
+      background-color: black;
+      color: white;
     }
 
     @media screen and (orientation: portrait) {
@@ -165,26 +177,21 @@
   <div id="memo-container">
     <div class="toolbar">
       <select id="fontSize">
-        <option value="10">Font 10px</option>
-        <option value="11">Font 11px</option>
-        <option value="12">Font 12px</option>
-        <option value="13">Font 13px</option>
-        <option value="14">Font 14px</option>
-        <option value="15">Font 15px</option>
-        <option value="16">Font 16px</option>
-        <option value="17">Font 17px</option>
-        <option value="18">Font 18px</option>
-        <option value="19">Font 19px</option>
-        <option value="20">Font 20px</option>
-        <option value="21">Font 21px</option>
+        <option value="1">크기 10</option>
+        <option value="2">크기 13</option>
+        <option value="3">크기 16</option>
+        <option value="4">크기 18</option>
+        <option value="5">크기 24</option>
+        <option value="6">크기 32</option>
+        <option value="7">크기 48</option>
       </select>
       <button id="boldButton">B</button>
       <select id="colorPicker">
-        <option value="white">White</option>
-        <option value="red">Red</option>
-        <option value="blue">Blue</option>
-        <option value="green">Green</option>
-        <option value="yellow">Yellow</option>
+        <option value="white">흰색</option>
+        <option value="red">빨강</option>
+        <option value="blue">파랑</option>
+        <option value="green">초록</option>
+        <option value="yellow">노랑</option>
       </select>
     </div>
 
@@ -192,6 +199,7 @@
   </div>
 
   <script>
+    // 시계
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -211,31 +219,26 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // 메모 저장
     const memo = document.getElementById('memo');
     memo.innerHTML = localStorage.getItem('memo') || '';
     memo.addEventListener('input', () => {
       localStorage.setItem('memo', memo.innerHTML);
     });
 
-    // 폰트 크기 (px로 직접 스타일 적용)
+    // 툴바 기능
     document.getElementById('fontSize').addEventListener('change', (e) => {
-      const size = e.target.value;
-      document.execCommand('fontSize', false, "7");
-      const fontElements = document.getElementsByTagName("font");
-      for (let i = 0; i < fontElements.length; i++) {
-        if (fontElements[i].size === "7") {
-          fontElements[i].removeAttribute("size");
-          fontElements[i].style.fontSize = size + "px";
-        }
-      }
+      document.execCommand('fontSize', false, e.target.value);
     });
 
-    // 볼드체
-    document.getElementById('boldButton').addEventListener('click', () => {
+    const boldButton = document.getElementById('boldButton');
+    boldButton.addEventListener('click', () => {
       document.execCommand('bold');
+      // 상태 체크: 눌림 상태를 명확하게 표시
+      const isBold = document.queryCommandState('bold');
+      boldButton.classList.toggle('active', isBold);
     });
 
-    // 색상
     document.getElementById('colorPicker').addEventListener('change', (e) => {
       document.execCommand('foreColor', false, e.target.value);
     });
