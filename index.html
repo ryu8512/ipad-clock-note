@@ -44,10 +44,11 @@
     #memo-container { flex: 3; padding: 10px; }
     #memo {
       font-family: Arial, sans-serif;
-      width: 100%; height: 100%; font-size: 10px;
+      width: 100%; height: 100%;
       background-color: #111; color: white;
       border: none; resize: none; outline: none;
       padding: 10px; line-height: 1.5;
+      font-size: 14px;
     }
     .toolbar {
       display: flex; justify-content: center;
@@ -94,11 +95,11 @@
     <div class="toolbar">
       <select id="fontSize">
         <option value="9">Font 9px</option>
-        <option value="10" selected>Font 10px</option>
+        <option value="10">Font 10px</option>
         <option value="11">Font 11px</option>
         <option value="12">Font 12px</option>
         <option value="13">Font 13px</option>
-        <option value="14">Font 14px</option>
+        <option value="14" selected>Font 14px</option>
         <option value="15">Font 15px</option>
         <option value="16">Font 16px</option>
         <option value="17">Font 17px</option>
@@ -122,7 +123,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
-    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
       authDomain: "ipad-clock-memo.firebaseapp.com",
@@ -137,7 +137,7 @@
     const db = firebase.database();
     const memoRef = db.ref("memo");
 
-    // 시계
+    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -156,13 +156,12 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 영역
     const memo = document.getElementById('memo');
     const fontSizeSelect = document.getElementById('fontSize');
     const colorSelect = document.getElementById('colorPicker');
     const boldButton = document.getElementById('boldButton');
 
-    // 저장 및 불러오기
+    // Firebase 불러오기
     memoRef.on('value', (snapshot) => {
       const value = snapshot.val();
       if (value !== null && value !== memo.innerHTML) {
@@ -170,12 +169,14 @@
       }
     });
 
-    memo.addEventListener('input', () => {
-      memoRef.set(memo.innerHTML);
-      localStorage.setItem('memo', memo.innerHTML);
-    });
+    // 수동 저장 함수
+    function saveMemo() {
+      const content = memo.innerHTML;
+      memoRef.set(content);
+      localStorage.setItem('memo', content);
+    }
 
-    // 스타일 적용 함수
+    // 수동 스타일 적용 함수
     function applyStyle() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
@@ -191,9 +192,13 @@
 
       range.deleteContents();
       range.insertNode(span);
+      saveMemo(); // 스타일 적용 후 저장
     }
 
-    // 이벤트 연결
+    // 입력 시 저장
+    memo.addEventListener('input', saveMemo);
+
+    // 스타일 버튼 이벤트
     fontSizeSelect.addEventListener('change', applyStyle);
     colorSelect.addEventListener('change', applyStyle);
     boldButton.addEventListener('click', () => {
