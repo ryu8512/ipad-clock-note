@@ -49,14 +49,11 @@
       border: none; resize: none; outline: none;
       padding: 10px; line-height: 1.5;
     }
-
-    /* 이 부분이 핵심: memo 내부 span 포함한 모든 요소에 동일한 렌더링 스타일 적용 */
     #memo * {
       font-family: Arial, sans-serif !important;
       line-height: 1.5 !important;
       vertical-align: baseline !important;
     }
-
     .toolbar {
       display: flex; justify-content: center;
       margin-bottom: 10px; gap: 10px; flex-wrap: wrap;
@@ -130,7 +127,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
-    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
       authDomain: "ipad-clock-memo.firebaseapp.com",
@@ -145,7 +141,12 @@
     const db = firebase.database();
     const memoRef = db.ref("memo");
 
-    // 시계
+    const memo = document.getElementById('memo');
+    const fontSizeSelect = document.getElementById('fontSize');
+    const colorSelect = document.getElementById('colorPicker');
+    const boldButton = document.getElementById('boldButton');
+
+    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -164,23 +165,26 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 요소들
-    const memo = document.getElementById('memo');
-    const fontSizeSelect = document.getElementById('fontSize');
-    const colorSelect = document.getElementById('colorPicker');
-    const boldButton = document.getElementById('boldButton');
-
-    // 메모 저장 함수
+    // 메모 저장 (디바운싱 처리)
+    let saveTimeout;
     function saveMemo() {
-      memoRef.set(memo.innerHTML);
-      localStorage.setItem('memo', memo.innerHTML);
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        const html = memo.innerHTML;
+        memoRef.set(html);
+        localStorage.setItem('memo', html);
+      }, 300);
     }
 
-    // 초기 데이터 로딩
+    // Firebase에서 데이터 초기 로딩
+    let isInitialLoad = true;
     memoRef.on('value', (snapshot) => {
       const value = snapshot.val();
       if (value !== null && value !== memo.innerHTML) {
         memo.innerHTML = value;
+      }
+      if (isInitialLoad) {
+        isInitialLoad = false;
       }
     });
 
@@ -198,7 +202,6 @@
       span.style.fontSize = fontSizeSelect.value + 'px';
       span.style.color = colorSelect.value;
       span.style.fontWeight = boldButton.classList.contains('active') ? 'bold' : 'normal';
-
       span.textContent = selectedText;
 
       range.deleteContents();
