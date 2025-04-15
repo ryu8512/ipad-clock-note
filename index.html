@@ -96,7 +96,7 @@
 
     .toolbar {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       margin-bottom: 10px;
       gap: 10px;
       flex-wrap: wrap;
@@ -105,23 +105,11 @@
     .toolbar select,
     .toolbar button {
       background: none;
+      color: white;
       border: none;
-      padding: 0;
-      margin: 0 10px 0 0;
-      font-size: 1rem;
-      color: white;
-      font-weight: normal;
+      font-size: 1.2rem;
+      font-weight: bold;
       cursor: pointer;
-      appearance: none;
-    }
-
-    .toolbar select option {
-      background-color: black;
-      color: white;
-    }
-
-    #boldButton.active {
-      text-decoration: underline;
     }
 
     @media screen and (orientation: portrait) {
@@ -160,6 +148,7 @@
       .toolbar select,
       .toolbar button {
         font-size: 4vw;
+        padding: 10px 0;
       }
     }
   </style>
@@ -176,13 +165,13 @@
   <div id="memo-container">
     <div class="toolbar">
       <select id="fontSize">
-        <option value="1">폰트크기 10</option>
-        <option value="2">폰트크기 13</option>
-        <option value="3">폰트크기 16</option>
-        <option value="4">폰트크기 18</option>
-        <option value="5">폰트크기 24</option>
-        <option value="6">폰트크기 32</option>
-        <option value="7">폰트크기 48</option>
+        <option value="10">10px</option>
+        <option value="13">13px</option>
+        <option value="16">16px</option>
+        <option value="18">18px</option>
+        <option value="24">24px</option>
+        <option value="32">32px</option>
+        <option value="48">48px</option>
       </select>
       <button id="boldButton">B</button>
       <select id="colorPicker">
@@ -198,7 +187,6 @@
   </div>
 
   <script>
-    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -218,23 +206,28 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 메모 로컬스토리지
     const memo = document.getElementById('memo');
     memo.innerHTML = localStorage.getItem('memo') || '';
     memo.addEventListener('input', () => {
       localStorage.setItem('memo', memo.innerHTML);
     });
 
-    // 폰트 크기
+    // 폰트 크기 (px로 직접 스타일 적용)
     document.getElementById('fontSize').addEventListener('change', (e) => {
-      document.execCommand('fontSize', false, e.target.value);
+      const size = e.target.value;
+      document.execCommand('fontSize', false, "7");
+      const fontElements = document.getElementsByTagName("font");
+      for (let i = 0; i < fontElements.length; i++) {
+        if (fontElements[i].size === "7") {
+          fontElements[i].removeAttribute("size");
+          fontElements[i].style.fontSize = size + "px";
+        }
+      }
     });
 
-    // 볼드체 (활성화 표시)
-    const boldButton = document.getElementById('boldButton');
-    boldButton.addEventListener('click', () => {
+    // 볼드체
+    document.getElementById('boldButton').addEventListener('click', () => {
       document.execCommand('bold');
-      boldButton.classList.toggle('active');
     });
 
     // 색상
