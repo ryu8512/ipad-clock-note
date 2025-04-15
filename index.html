@@ -1,129 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clock & Memo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+
+  <!-- 캐시 방지 메타 태그 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       background-color: black;
       color: white;
-      font-family: monospace;
-      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+      height: 100%;
+      width: 100%;
       overflow: hidden;
     }
 
-    body {
+    #container {
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
+      height: 100vh;
+      width: 100vw;
     }
 
-    #clock-container {
-      text-align: center;
-      height: auto;
-      position: relative;
-      overflow: visible;
-    }
-
-    #date {
-      font-size: 40px;
-      margin-bottom: 60px;
-      font-family: 'Orbitron', sans-serif;
-      font-variant-numeric: tabular-nums;
-      text-align: center;
-    }
-
-    .clock-inner {
-      position: relative;
-      height: 280px;
-    }
-
-    #time {
-      font-size: 240px;
-      font-family: 'Orbitron', sans-serif;
-      transform: scaleX(0.9);
-      display: inline-block;
-      min-width: 440px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    #seconds {
-      position: absolute;
-      top: 100%;
-      right: 50px;
-      margin-top: 10px;
-      font-size: 32px;
-      font-family: 'Orbitron', sans-serif;
-      font-variant-numeric: tabular-nums;
-      z-index: 1;
-      visibility: visible;
-    }
-
-    #memo {
-      font-size: 20px;
-      background-color: black;
-      color: white;
-      border: none;
-      outline: none;
-      resize: none;
-      padding: 10px;
-      box-sizing: border-box;
-      line-height: 1.4;
-    }
-
-    @media (orientation: portrait) {
-      body {
-        flex-direction: column;
-        padding: 20px;
-      }
-
-      #clock-container {
-        margin-top: 40px;
-      }
-
-      #date {
-        font-size: 20px;
-        margin-bottom: 0px;
-      }
-
-      .clock-inner {
-        height: auto;
-      }
-
-      #time {
-        font-size: 34px;
-        min-width: auto;
-        text-align: center;
-      }
-
-      #seconds {
-        display: none;
-      }
-
-      #memo {
-        width: 100%;
-        height: calc(100vh - 160px);
-        margin-top: 20px;
-        font-size: 18px;
-      }
-    }
-
+    /* 가로 모드 */
     @media (orientation: landscape) {
-      body {
+      #container {
         flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        height: 100vh;
-        padding: 0;
       }
 
       #clock-container {
@@ -132,69 +42,134 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding-right: 20px;
-        overflow: visible;
+      }
+
+      #memo-container {
+        flex: 3;
+      }
+
+      #time {
+        font-size: 12vw;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #seconds {
+        font-size: 4vw;
+        vertical-align: baseline;
+        font-variant-numeric: tabular-nums;
       }
 
       #date {
+        font-size: 3vw;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+    }
+
+    /* 세로 모드 */
+    @media (orientation: portrait) {
+      #clock-container {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      #date {
+        font-size: 6vw;
         margin-bottom: 10px;
         text-align: center;
       }
 
-      .clock-inner {
-        width: 100%;
-        text-align: right;
+      #time {
+        font-size: 18vw;
+        font-variant-numeric: tabular-nums;
       }
 
-      #memo {
-        flex: 3;
-        height: 100vh;
-        margin: 0;
-        overflow-y: auto;
+      #seconds {
+        display: none;
       }
+
+      #container {
+        flex-direction: column;
+      }
+
+      #clock-container {
+        flex: 3;
+      }
+
+      #memo-container {
+        flex: 7;
+      }
+    }
+
+    #memo {
+      width: 100%;
+      height: 100%;
+      font-size: 1.2em;
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 10px;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    #memo:focus {
+      outline: none;
     }
   </style>
 </head>
 <body>
-  <div id="clock-container">
-    <div id="date"></div>
-    <div class="clock-inner">
-      <span id="time"></span>
-      <span id="seconds"></span>
+  <div id="container">
+    <div id="clock-container">
+      <div id="date"></div>
+      <div>
+        <span id="time"></span>
+        <span id="seconds"></span>
+      </div>
+    </div>
+    <div id="memo-container">
+      <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
     </div>
   </div>
-
-  <textarea id="memo" placeholder="메모를 입력하세요..."></textarea>
 
   <script>
     function updateClock() {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('time').textContent = `${hours}:${minutes}`;
+      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const seconds = now.toLocaleTimeString('en-GB', { second: '2-digit' });
+      const date = now.toLocaleDateString('en-GB', { year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short' });
+
+      document.getElementById('time').textContent = time;
       document.getElementById('seconds').textContent = seconds;
+      document.getElementById('date').textContent = date.replace(/\//g, '.');
     }
 
-    function updateDate() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const weekday = weekdays[now.getDay()];
-      document.getElementById('date').textContent = `${year}. ${month}. ${day}. ${weekday}`;
+    function saveMemo() {
+      localStorage.setItem('memo', document.getElementById('memo').value);
     }
 
-    setInterval(updateClock, 1000);
+    function loadMemo() {
+      const saved = localStorage.getItem('memo');
+      if (saved !== null) {
+        document.getElementById('memo').value = saved;
+      }
+    }
+
+    document.getElementById('memo').addEventListener('input', saveMemo);
+
+    // 시계 업데이트
     updateClock();
-    updateDate();
+    setInterval(updateClock, 1000);
 
-    const memo = document.getElementById('memo');
-    memo.value = localStorage.getItem('memo') || '';
-    memo.addEventListener('input', () => {
-      localStorage.setItem('memo', memo.value);
-    });
+    // 메모 불러오기
+    loadMemo();
+
+    // 강제 새로고침 (홈화면 앱 캐시 우회용)
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      if (!location.href.includes('?t=')) {
+        location.href = location.pathname + '?t=' + new Date().getTime();
+      }
+    }
   </script>
 </body>
 </html>
