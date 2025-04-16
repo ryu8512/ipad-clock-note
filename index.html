@@ -36,26 +36,24 @@
       margin-top: 20px;
     }
 
-    #time-container {
-      display: flex;
-      justify-content: center;
-      align-items: baseline;
-      margin-top: 10px;
+    #clock-container {
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
       font-feature-settings: "tnum";
-    }
-
-    #time-main {
       font-size: var(--clock-font-size);
-      min-width: 6ch;
-      text-align: right;
+      line-height: 1;
+      margin-top: 10px;
     }
 
-    #time-seconds {
-      font-size: 24px;
-      margin-left: 8px;
-      min-width: 2ch;
-      text-align: left;
+    #time {
+      display: inline-block;
+      min-width: 8ch; /* 시:분 */
+    }
+
+    #seconds {
+      display: inline-block;
+      min-width: 2ch; /* 초 */
     }
 
     .toolbar {
@@ -120,9 +118,8 @@
   <button id="refresh-button" onclick="location.reload()">⟳</button>
 
   <div id="date"></div>
-  <div id="time-container">
-    <span id="time-main"></span>
-    <span id="time-seconds"></span>
+  <div id="clock-container">
+    <span id="time">00:00</span><span id="seconds">00</span>
   </div>
 
   <div class="toolbar">
@@ -190,8 +187,8 @@
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
       document.getElementById("date").textContent = `${year}.${month}.${date}.${day}`;
-      document.getElementById("time-main").textContent = `${hours}:${minutes}`;
-      document.getElementById("time-seconds").textContent = `:${seconds}`;
+      document.getElementById("time").textContent = `${hours}:${minutes}:`;
+      document.getElementById("seconds").textContent = `${seconds}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
