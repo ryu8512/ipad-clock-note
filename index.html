@@ -36,15 +36,26 @@
       margin-top: 20px;
     }
 
-    #time {
-      font-size: var(--clock-font-size);
+    #time-container {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      margin-top: 10px;
       font-variant-numeric: tabular-nums;
       font-feature-settings: "tnum";
-      line-height: 1;
-      text-align: center;
-      margin-top: 10px;
-      min-width: 12ch;
-      display: inline-block;
+    }
+
+    #time-main {
+      font-size: var(--clock-font-size);
+      min-width: 6ch;
+      text-align: right;
+    }
+
+    #time-seconds {
+      font-size: 24px;
+      margin-left: 8px;
+      min-width: 2ch;
+      text-align: left;
     }
 
     .toolbar {
@@ -109,7 +120,10 @@
   <button id="refresh-button" onclick="location.reload()">⟳</button>
 
   <div id="date"></div>
-  <div id="time"></div>
+  <div id="time-container">
+    <span id="time-main"></span>
+    <span id="time-seconds"></span>
+  </div>
 
   <div class="toolbar">
     <select id="fontSize">
@@ -176,7 +190,8 @@
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
       document.getElementById("date").textContent = `${year}.${month}.${date}.${day}`;
-      document.getElementById("time").textContent = `${hours}:${minutes}:${seconds}`;
+      document.getElementById("time-main").textContent = `${hours}:${minutes}`;
+      document.getElementById("time-seconds").textContent = `:${seconds}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
