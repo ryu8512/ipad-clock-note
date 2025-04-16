@@ -1,167 +1,166 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clock and Memo</title>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clock + Memo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ClockMemo" />
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: black;
-      color: white;
+    :root {
+      --clock-font-size: 64px;
+      --date-font-size: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; width: 100%;
+      background-color: black; color: white;
+      font-family: 'Orbitron', sans-serif;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
-    /* 날짜 영역 */
+    #refresh-button {
+      position: absolute; top: 20px; left: 20px;
+      font-size: 2rem; background: transparent; color: white;
+      border: none; padding: 5px 10px; cursor: pointer; z-index: 1000;
+    }
+
     #date {
+      font-size: var(--date-font-size);
       text-align: center;
-      font-size: 18px;
-      margin-top: 10px;
-    }
-
-    /* 시계 영역 */
-    #clock-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-grow: 1;
+      margin-top: 20px;
     }
 
     #time {
-      font-size: 50px;
-      font-family: 'Orbitron', sans-serif;
+      font-size: var(--clock-font-size);
       font-variant-numeric: tabular-nums;
-      font-feature-settings: 'tnum' 1;
-      letter-spacing: 0.05em;
-    }
-
-    #seconds {
-      font-size: 20px;
-      font-family: 'Orbitron', sans-serif;
-      font-variant-numeric: tabular-nums;
-      font-feature-settings: 'tnum' 1;
-      letter-spacing: 0.05em;
-      min-width: 2ch;
+      line-height: 1;
       text-align: center;
+      margin-top: 10px;
     }
 
-    /* 메모 영역 */
-    #memo {
-      flex-grow: 1;
-      width: 100%;
-      padding: 10px;
-      resize: none;
-      background-color: #222;
-      border: none;
-      color: white;
-      font-size: 16px;
-      line-height: 1.5;
-      overflow: auto;
-    }
-
-    /* 툴바 */
-    #toolbar {
+    .toolbar {
       display: flex;
-      justify-content: space-between;
-      padding: 5px;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+      flex-wrap: wrap;
     }
 
-    /* 폰트 크기 옵션 */
-    select {
-      background-color: #333;
-      border: none;
-      color: white;
-      padding: 5px;
-      font-size: 14px;
-    }
-
-    button {
-      background-color: #333;
+    .toolbar select, .toolbar button {
+      background: none;
       color: white;
       border: none;
-      padding: 5px;
+      padding: 5px 8px;
+      font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    /* 모바일에서 세로모드용 레이아웃 조정 */
-    @media (max-width: 768px) {
-      #clock-container {
-        flex-direction: column;
-        align-items: center;
-      }
+    .toolbar button.active {
+      background-color: white;
+      color: black;
+      border-radius: 4px;
+    }
 
-      #time {
-        font-size: 30px;
-      }
+    .toolbar select option {
+      background-color: black;
+      color: white;
+    }
 
-      #seconds {
-        font-size: 16px;
-      }
+    #memo-container {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
 
-      #memo {
-        font-size: 14px;
-      }
+    #memo {
+      font-family: Arial, sans-serif;
+      width: 100%;
+      flex: 1;
+      font-size: 14px;
+      background-color: #111;
+      color: white;
+      border: none;
+      resize: none;
+      outline: none;
+      padding: 10px;
+      line-height: 1.5;
+      overflow-y: auto;
+    }
+
+    #memo * {
+      font-family: Arial, sans-serif !important;
+      line-height: 1.5 !important;
+      vertical-align: baseline !important;
     }
   </style>
 </head>
 <body>
+  <button id="refresh-button" onclick="location.reload()">⟳</button>
 
-  <!-- 날짜 영역 -->
   <div id="date"></div>
+  <div id="time"></div>
 
-  <!-- 시계 영역 -->
-  <div id="clock-container">
-    <div id="time"></div>
-    <div id="seconds"></div>
+  <div class="toolbar">
+    <select id="fontSize">
+      <option value="9">Font 9px</option>
+      <option value="10">Font 10px</option>
+      <option value="11">Font 11px</option>
+      <option value="12">Font 12px</option>
+      <option value="13">Font 13px</option>
+      <option value="14" selected>Font 14px</option>
+      <option value="15">Font 15px</option>
+      <option value="16">Font 16px</option>
+      <option value="17">Font 17px</option>
+      <option value="18">Font 18px</option>
+      <option value="19">Font 19px</option>
+      <option value="20">Font 20px</option>
+    </select>
+    <select id="colorPicker">
+      <option value="white">White</option>
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+      <option value="yellow">Yellow</option>
+    </select>
+    <button id="boldButton">B</button>
   </div>
 
-  <!-- 메모 영역 -->
-  <textarea id="memo" placeholder="메모를 작성하세요..."></textarea>
+  <div id="memo-container">
+    <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
+  </div>
 
-  <!-- Firebase 설정 -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
+    // Firebase 설정
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      databaseURL: "YOUR_DATABASE_URL",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
+      authDomain: "ipad-clock-memo.firebaseapp.com",
+      databaseURL: "https://ipad-clock-memo-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ipad-clock-memo",
+      storageBucket: "ipad-clock-memo.appspot.com",
+      messagingSenderId: "54923892654",
+      appId: "1:54923892654:web:ac3f712f18245490885a3f"
     };
-
-    // Firebase 초기화
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const memoRef = db.ref("memo");
 
-    // 메모 동기화
-    const memoRef = db.ref('memo');
+    const memo = document.getElementById("memo");
+    const fontSizeSelect = document.getElementById("fontSize");
+    const colorSelect = document.getElementById("colorPicker");
+    const boldButton = document.getElementById("boldButton");
 
-    // 메모 내용 가져오기
-    memoRef.on('value', (snapshot) => {
-      const memoData = snapshot.val();
-      if (memoData) {
-        document.getElementById("memo").value = memoData;
-      }
-    });
-
-    // 메모 저장하기
-    document.getElementById("memo").addEventListener('input', () => {
-      const memoContent = document.getElementById("memo").value;
-      memoRef.set(memoContent);
-    });
-  </script>
-
-  <script>
-    // 시계 업데이트 함수
+    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
@@ -173,19 +172,74 @@
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
-      // 날짜 업데이트
       document.getElementById("date").textContent = `${year}.${month}.${date}.${day}`;
+      document.getElementById("time").textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-      // 시:분 업데이트
-      document.getElementById("time").textContent = `${hours}:${minutes}`;
-
-      // 초 업데이트
-      document.getElementById("seconds").textContent = seconds;
+    // 메모 저장
+    function saveMemo() {
+      memoRef.set(memo.innerHTML);
+      localStorage.setItem("memo", memo.innerHTML);
     }
 
-    // 1초마다 시계 업데이트
-    setInterval(updateClock, 1000);
-  </script>
+    // 초기 메모 불러오기
+    memoRef.on("value", (snapshot) => {
+      const value = snapshot.val();
+      if (value !== null && value !== memo.innerHTML) {
+        memo.innerHTML = value;
+        adjustFontForLandscape();
+      }
+    });
 
+    memo.addEventListener("input", saveMemo);
+
+    // 스타일 적용
+    function applyStyle() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      if (!selectedText) return;
+
+      const span = document.createElement("span");
+      span.style.fontSize = fontSizeSelect.value + "px";
+      span.style.color = colorSelect.value;
+      span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
+      span.textContent = selectedText;
+
+      range.deleteContents();
+      range.insertNode(span);
+      saveMemo();
+    }
+
+    fontSizeSelect.addEventListener("change", applyStyle);
+    colorSelect.addEventListener("change", applyStyle);
+    boldButton.addEventListener("click", () => {
+      boldButton.classList.toggle("active");
+      applyStyle();
+    });
+
+    // 가로모드 시 폰트 크기 +4px
+    function adjustFontForLandscape() {
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        const spans = memo.querySelectorAll("span[style*='font-size']");
+        spans.forEach(span => {
+          const match = span.style.fontSize.match(/^(\d+)px$/);
+          if (match) {
+            const original = parseInt(match[1]);
+            span.style.fontSize = (original + 4) + "px";
+          }
+        });
+      }
+    }
+
+    window.addEventListener("orientationchange", () => {
+      setTimeout(() => adjustFontForLandscape(), 200);
+    });
+
+    window.addEventListener("load", adjustFontForLandscape);
+  </script>
 </body>
 </html>
