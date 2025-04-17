@@ -180,7 +180,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기 감지 및 초기 폰트 설정
+    // 기기 감지 및 초기 폰트 크기 설정
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) memo.style.fontSize = "14px";
     else if (/ipad/.test(ua)) memo.style.fontSize = "40px";
@@ -188,7 +188,6 @@
     else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "40px";
     else memo.style.fontSize = "40px";
 
-    // 메모 저장
     function saveMemo() {
       memoRef.set(memo.innerHTML);
       localStorage.setItem("memo", memo.innerHTML);
@@ -203,6 +202,10 @@
 
     memo.addEventListener("input", saveMemo);
 
+    function getCurrentFontSize(element) {
+      return parseInt(window.getComputedStyle(element).fontSize, 10);
+    }
+
     function applyStyleToSelection(styleCallback) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
@@ -213,20 +216,26 @@
       span.appendChild(range.extractContents());
       styleCallback(span);
       range.insertNode(span);
+
+      // 커서를 span 뒤로 이동 (연속 적용)
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.setStartAfter(span);
+      newRange.collapse(true);
+      selection.addRange(newRange);
+
       saveMemo();
     }
 
     fontSizeIncrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) + 1;
-        let lineHeight = parseFloat(getComputedStyle(memo).lineHeight);
-        memo.style.fontSize = size + "px";
-        memo.style.lineHeight = (lineHeight + 0.1) + "em";
+        const currentSize = getCurrentFontSize(memo);
+        memo.style.fontSize = (currentSize + 1) + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
-          span.style.fontSize = (current + 1) + "px";
+          const currentSize = getCurrentFontSize(span);
+          span.style.fontSize = (currentSize + 1) + "px";
         });
       }
     });
@@ -234,14 +243,12 @@
     fontSizeDecrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) - 1;
-        let lineHeight = parseFloat(getComputedStyle(memo).lineHeight);
-        memo.style.fontSize = size + "px";
-        memo.style.lineHeight = (lineHeight - 0.1) + "em";
+        const currentSize = getCurrentFontSize(memo);
+        memo.style.fontSize = (currentSize - 1) + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
-          span.style.fontSize = (current - 1) + "px";
+          const currentSize = getCurrentFontSize(span);
+          span.style.fontSize = (currentSize - 1) + "px";
         });
       }
     });
