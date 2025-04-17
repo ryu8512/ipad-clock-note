@@ -49,13 +49,13 @@
 
     #time {
       display: inline-block;
-      min-width: 6ch; /* 시:분 */
+      min-width: 6ch;
       text-align: right;
     }
 
     #seconds {
       display: inline-block;
-      min-width: 2ch; /* 초 */
+      min-width: 2ch;
       text-align: left;
     }
 
@@ -99,7 +99,6 @@
       font-family: Arial, sans-serif;
       width: 100%;
       flex: 1;
-      font-size: 14px;
       background-color: #111;
       color: white;
       border: none;
@@ -126,8 +125,8 @@
   </div>
 
   <div class="toolbar">
-    <button id="fontSizeUp">A↑</button>
-    <button id="fontSizeDown">A↓</button>
+    <button id="fontSizeIncrease">A↑</button>
+    <button id="fontSizeDecrease">A↓</button>
     <select id="colorPicker">
       <option value="white">White</option>
       <option value="red">Red</option>
@@ -146,7 +145,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script>
-    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyD_46mrsyHrDmf_GCz4rjQSHmkjU3cnIEI",
       authDomain: "ipad-clock-memo.firebaseapp.com",
@@ -161,47 +159,32 @@
     const memoRef = db.ref("memo");
 
     const memo = document.getElementById("memo");
-    const fontSizeUp = document.getElementById("fontSizeUp");
-    const fontSizeDown = document.getElementById("fontSizeDown");
+    const fontSizeIncrease = document.getElementById("fontSizeIncrease");
+    const fontSizeDecrease = document.getElementById("fontSizeDecrease");
     const colorSelect = document.getElementById("colorPicker");
     const boldButton = document.getElementById("boldButton");
 
-    let fontSize = 14;
-
-    // 기기 감지 및 기본 폰트 크기 설정
-    function setDefaultFontSize() {
-      const userAgent = navigator.userAgent;
-      if (/iPhone/i.test(userAgent)) {
-        fontSize = 14;
-      } else {
-        fontSize = 20;
-      }
-      document.getElementById("memo").style.fontSize = fontSize + "px";
-    }
-    setDefaultFontSize();
-
-    // 시계 업데이트
     function updateClock() {
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const date = String(now.getDate()).padStart(2, "0");
-      const dayNamesEng = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const dayNamesKor = ["일", "월", "화", "수", "목", "금", "토"];
-      const dayIndex = now.getDay();
-      const dayEng = dayNamesEng[dayIndex];
-      const dayKor = dayNamesKor[dayIndex];
-      
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-
-      document.getElementById("date").textContent = `${year}.${month}.${date}.${dayEng} (${dayKor})`;
-      document.getElementById("time").textContent = `${hours}:${minutes}:`;
-      document.getElementById("seconds").textContent = `${seconds}`;
+      const days = ["일", "월", "화", "수", "목", "금", "토"];
+      const dayEng = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      document.getElementById("date").textContent = `${year}.${month}.${date}.${dayEng[now.getDay()]} (${days[now.getDay()]})`;
+      document.getElementById("time").textContent = now.toTimeString().slice(0, 5) + ":";
+      document.getElementById("seconds").textContent = now.toTimeString().slice(6, 8);
     }
     setInterval(updateClock, 1000);
     updateClock();
+
+    // 기기 감지 및 초기 폰트 설정
+    const ua = navigator.userAgent.toLowerCase();
+    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
+    else if (/ipad/.test(ua)) memo.style.fontSize = "20px";
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "18px"; // Galaxy Tab S7 FE
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "22px";
+    else memo.style.fontSize = "20px"; // 기본값
 
     // 메모 저장
     function saveMemo() {
@@ -209,7 +192,6 @@
       localStorage.setItem("memo", memo.innerHTML);
     }
 
-    // 초기 메모 불러오기
     memoRef.on("value", (snapshot) => {
       const value = snapshot.val();
       if (value !== null && value !== memo.innerHTML) {
@@ -228,7 +210,9 @@
       if (!selectedText) return;
 
       const span = document.createElement("span");
-      span.style.fontSize = fontSize + "px";
+      const currentSize = getComputedStyle(memo).fontSize;
+      span.style.fontSize = currentSize;
+      span.style.lineHeight = "1.5";
       span.style.color = colorSelect.value;
       span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
       span.textContent = selectedText;
@@ -238,15 +222,25 @@
       saveMemo();
     }
 
-    fontSizeUp.addEventListener("click", () => {
-      fontSize += 1;
-      document.getElementById("memo").style.fontSize = fontSize + "px";
+    fontSizeIncrease.addEventListener("click", () => {
+      let currentSize = parseInt(getComputedStyle(memo).fontSize);
+      let newSize = currentSize + 1;
+      memo.style.fontSize = newSize + "px";
+      memo.querySelectorAll("span").forEach(span => {
+        span.style.fontSize = newSize + "px";
+        span.style.lineHeight = "1.5";
+      });
       saveMemo();
     });
 
-    fontSizeDown.addEventListener("click", () => {
-      fontSize -= 1;
-      document.getElementById("memo").style.fontSize = fontSize + "px";
+    fontSizeDecrease.addEventListener("click", () => {
+      let currentSize = parseInt(getComputedStyle(memo).fontSize);
+      let newSize = currentSize - 1;
+      memo.style.fontSize = newSize + "px";
+      memo.querySelectorAll("span").forEach(span => {
+        span.style.fontSize = newSize + "px";
+        span.style.lineHeight = "1.5";
+      });
       saveMemo();
     });
 
