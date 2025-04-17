@@ -1,3 +1,4 @@
+<!-- 수정된 전체 HTML 코드 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -107,6 +108,7 @@
       padding: 10px;
       line-height: 1.5;
       overflow-y: auto;
+      font-size: 20px; /* 기본값, JS에서 덮어씀 */
     }
 
     #memo * {
@@ -180,11 +182,12 @@
 
     // 기기 감지 및 초기 폰트 설정
     const ua = navigator.userAgent.toLowerCase();
-    if (/iphone/.test(ua)) memo.style.fontSize = "12px";
-    else if (/ipad/.test(ua)) memo.style.fontSize = "30px";
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "30px"; // Galaxy Tab S7 FE
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "30px";
-    else memo.style.fontSize = "30px"; // 기본값
+    const isIpad = /ipad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
+    else if (isIpad) memo.style.fontSize = "20px";
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "18px"; // Galaxy Tab S7 FE
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "22px";
+    else memo.style.fontSize = "20px";
 
     // 메모 저장
     function saveMemo() {
@@ -201,21 +204,18 @@
 
     memo.addEventListener("input", saveMemo);
 
-    // 스타일 적용
-    function applyStyle() {
+    function applyStyleToSelection(change) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
+
       const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-      if (!selectedText) return;
+      if (range.collapsed) return;
 
       const span = document.createElement("span");
-      const currentSize = getComputedStyle(memo).fontSize;
-      span.style.fontSize = currentSize;
-      span.style.lineHeight = "1.5";
-      span.style.color = colorSelect.value;
-      span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
-      span.textContent = selectedText;
+      for (const key in change) {
+        span.style[key] = change[key];
+      }
+      span.textContent = range.toString();
 
       range.deleteContents();
       range.insertNode(span);
@@ -223,31 +223,32 @@
     }
 
     fontSizeIncrease.addEventListener("click", () => {
-      let currentSize = parseInt(getComputedStyle(memo).fontSize);
-      let newSize = currentSize + 1;
-      memo.style.fontSize = newSize + "px";
-      memo.querySelectorAll("span").forEach(span => {
-        span.style.fontSize = newSize + "px";
-        span.style.lineHeight = "1.5";
+      applyStyleToSelection({
+        fontSize: "larger",
+        lineHeight: "1.5"
       });
-      saveMemo();
     });
 
     fontSizeDecrease.addEventListener("click", () => {
-      let currentSize = parseInt(getComputedStyle(memo).fontSize);
-      let newSize = currentSize - 1;
-      memo.style.fontSize = newSize + "px";
-      memo.querySelectorAll("span").forEach(span => {
-        span.style.fontSize = newSize + "px";
-        span.style.lineHeight = "1.5";
+      applyStyleToSelection({
+        fontSize: "smaller",
+        lineHeight: "1.5"
       });
-      saveMemo();
     });
 
-    colorSelect.addEventListener("change", applyStyle);
+    colorSelect.addEventListener("change", () => {
+      applyStyleToSelection({
+        color: colorSelect.value,
+        lineHeight: "1.5"
+      });
+    });
+
     boldButton.addEventListener("click", () => {
       boldButton.classList.toggle("active");
-      applyStyle();
+      applyStyleToSelection({
+        fontWeight: boldButton.classList.contains("active") ? "bold" : "normal",
+        lineHeight: "1.5"
+      });
     });
   </script>
 </body>
