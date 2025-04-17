@@ -126,20 +126,8 @@
   </div>
 
   <div class="toolbar">
-    <select id="fontSize">
-      <option value="9">Font 9px</option>
-      <option value="10">Font 10px</option>
-      <option value="11">Font 11px</option>
-      <option value="12">Font 12px</option>
-      <option value="13">Font 13px</option>
-      <option value="14" selected>Font 14px</option>
-      <option value="15">Font 15px</option>
-      <option value="16">Font 16px</option>
-      <option value="17">Font 17px</option>
-      <option value="18">Font 18px</option>
-      <option value="19">Font 19px</option>
-      <option value="20">Font 20px</option>
-    </select>
+    <button id="fontSizeUp">A↑</button>
+    <button id="fontSizeDown">A↓</button>
     <select id="colorPicker">
       <option value="white">White</option>
       <option value="red">Red</option>
@@ -173,9 +161,24 @@
     const memoRef = db.ref("memo");
 
     const memo = document.getElementById("memo");
-    const fontSizeSelect = document.getElementById("fontSize");
+    const fontSizeUp = document.getElementById("fontSizeUp");
+    const fontSizeDown = document.getElementById("fontSizeDown");
     const colorSelect = document.getElementById("colorPicker");
     const boldButton = document.getElementById("boldButton");
+
+    let fontSize = 14;
+
+    // 기기 감지 및 기본 폰트 크기 설정
+    function setDefaultFontSize() {
+      const userAgent = navigator.userAgent;
+      if (/iPhone/i.test(userAgent)) {
+        fontSize = 14;
+      } else {
+        fontSize = 20;
+      }
+      document.getElementById("memo").style.fontSize = fontSize + "px";
+    }
+    setDefaultFontSize();
 
     // 시계 업데이트
     function updateClock() {
@@ -211,7 +214,6 @@
       const value = snapshot.val();
       if (value !== null && value !== memo.innerHTML) {
         memo.innerHTML = value;
-        adjustFontForLandscape();
       }
     });
 
@@ -226,7 +228,7 @@
       if (!selectedText) return;
 
       const span = document.createElement("span");
-      span.style.fontSize = fontSizeSelect.value + "px";
+      span.style.fontSize = fontSize + "px";
       span.style.color = colorSelect.value;
       span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
       span.textContent = selectedText;
@@ -236,32 +238,23 @@
       saveMemo();
     }
 
-    fontSizeSelect.addEventListener("change", applyStyle);
+    fontSizeUp.addEventListener("click", () => {
+      fontSize += 1;
+      document.getElementById("memo").style.fontSize = fontSize + "px";
+      saveMemo();
+    });
+
+    fontSizeDown.addEventListener("click", () => {
+      fontSize -= 1;
+      document.getElementById("memo").style.fontSize = fontSize + "px";
+      saveMemo();
+    });
+
     colorSelect.addEventListener("change", applyStyle);
     boldButton.addEventListener("click", () => {
       boldButton.classList.toggle("active");
       applyStyle();
     });
-
-    // 가로모드 시 폰트 크기 +4px
-    function adjustFontForLandscape() {
-      if (window.matchMedia("(orientation: landscape)").matches) {
-        const spans = memo.querySelectorAll("span[style*='font-size']");
-        spans.forEach(span => {
-          const match = span.style.fontSize.match(/^(\d+)px$/);
-          if (match) {
-            const original = parseInt(match[1]);
-            span.style.fontSize = (original + 4) + "px";
-          }
-        });
-      }
-    }
-
-    window.addEventListener("orientationchange", () => {
-      setTimeout(() => adjustFontForLandscape(), 200);
-    });
-
-    window.addEventListener("load", adjustFontForLandscape);
   </script>
 </body>
 </html>
