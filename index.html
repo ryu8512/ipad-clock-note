@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clock + Memo</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="ClockMemo" />
   <style>
     :root {
       --clock-font-size: 64px;
@@ -166,35 +163,13 @@
     const boldButton = document.getElementById("boldButton");
     const resetButton = document.getElementById("resetStyle");
 
-    function updateClock() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const date = String(now.getDate()).padStart(2, "0");
-      const days = ["일", "월", "화", "수", "목", "금", "토"];
-      const dayEng = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      document.getElementById("date").textContent = `${year}.${month}.${date}.${dayEng[now.getDay()]} (${days[now.getDay()]})`;
-      document.getElementById("time").textContent = now.toTimeString().slice(0, 5) + ":";
-      document.getElementById("seconds").textContent = now.toTimeString().slice(6, 8);
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // 기기별 폰트 크기 감지 및 기본값 설정
+    // 기기별 기본 폰트 크기 설정
     const ua = navigator.userAgent.toLowerCase();
-    let defaultFontSize;
-
-    if (/iphone/.test(ua)) {
-      defaultFontSize = 14;
-    } else if (/ipad/.test(ua)) {
-      defaultFontSize = 40;
-    } else if (/samsung/.test(ua) && /sm-t733/.test(ua)) {
-      defaultFontSize = 40;
-    } else if (navigator.platform.startsWith("Win")) {
-      defaultFontSize = 40;
-    } else {
-      defaultFontSize = 40;
-    }
+    let defaultFontSize = 40;
+    if (/iphone/.test(ua)) defaultFontSize = 14;
+    else if (/ipad/.test(ua)) defaultFontSize = 40;
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) defaultFontSize = 40;
+    else if (navigator.platform.startsWith("Win")) defaultFontSize = 40;
 
     memo.style.fontSize = defaultFontSize + "px";
 
@@ -233,15 +208,20 @@
       saveMemo();
     }
 
+    function getFontSizeFromElement(el) {
+      return parseInt(window.getComputedStyle(el).fontSize || defaultFontSize);
+    }
+
     fontSizeIncrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) + 1;
-        memo.style.fontSize = size + "px";
+        let current = parseInt(getComputedStyle(memo).fontSize) || defaultFontSize;
+        memo.style.fontSize = (current + 1) + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || defaultFontSize);
+          let current = getFontSizeFromElement(span);
           span.style.fontSize = (current + 1) + "px";
+          span.style.lineHeight = "1.5";
         });
       }
     });
@@ -249,12 +229,13 @@
     fontSizeDecrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) - 1;
-        memo.style.fontSize = size + "px";
+        let current = parseInt(getComputedStyle(memo).fontSize) || defaultFontSize;
+        memo.style.fontSize = (current - 1) + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || defaultFontSize);
+          let current = getFontSizeFromElement(span);
           span.style.fontSize = (current - 1) + "px";
+          span.style.lineHeight = "1.5";
         });
       }
     });
@@ -277,10 +258,26 @@
         span.style.fontSize = "";
         span.style.color = "";
         span.style.fontWeight = "";
+        span.style.lineHeight = "";
       });
       boldButton.classList.remove("active");
       colorSelect.value = "white";
     });
+
+    // 시계
+    function updateClock() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const date = String(now.getDate()).padStart(2, "0");
+      const days = ["일", "월", "화", "수", "목", "금", "토"];
+      const dayEng = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      document.getElementById("date").textContent = `${year}.${month}.${date}.${dayEng[now.getDay()]} (${days[now.getDay()]})`;
+      document.getElementById("time").textContent = now.toTimeString().slice(0, 5) + ":";
+      document.getElementById("seconds").textContent = now.toTimeString().slice(6, 8);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
   </script>
 </body>
 </html>
