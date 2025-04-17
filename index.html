@@ -183,10 +183,10 @@
     // 기기별 폰트 크기 설정
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) memo.style.fontSize = "14px";
-    else if (/ipad/.test(ua)) memo.style.fontSize = "20px";
-    else if (/sm-t733/.test(ua)) memo.style.fontSize = "18px"; // 갤탭 S7 FE
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "22px";
-    else memo.style.fontSize = "20px";
+    else if (/ipad/.test(ua)) memo.style.fontSize = "30px";
+    else if (/sm-t733/.test(ua)) memo.style.fontSize = "30px"; // 갤탭 S7 FE
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "30px";
+    else memo.style.fontSize = "30px";
 
     // 메모 저장
     function saveMemo() {
