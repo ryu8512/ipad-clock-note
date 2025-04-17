@@ -180,11 +180,11 @@
 
     // 기기 감지 및 초기 폰트 설정
     const ua = navigator.userAgent.toLowerCase();
-    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
-    else if (/ipad/.test(ua)) memo.style.fontSize = "20px";
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "18px"; // Galaxy Tab S7 FE
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "22px";
-    else memo.style.fontSize = "20px"; // 기본값
+    if (/iphone/.test(ua)) memo.style.fontSize = "12px";
+    else if (/ipad/.test(ua)) memo.style.fontSize = "30px";
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "30px"; // Galaxy Tab S7 FE
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "30px";
+    else memo.style.fontSize = "30px"; // 기본값
 
     // 메모 저장
     function saveMemo() {
