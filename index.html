@@ -181,12 +181,12 @@
     updateClock();
 
     // 기기 감지 및 기본 폰트 크기 설정
-    let defaultFontSize = 20;
+    let defaultFontSize = 30;
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) defaultFontSize = 14;
     else if (/ipad/.test(ua) || (navigator.userAgent.includes("Macintosh") && 'ontouchend' in document)) defaultFontSize = 30;
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) defaultFontSize = 18;
-    else if (navigator.platform.startsWith("Win")) defaultFontSize = 22;
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) defaultFontSize = 30;
+    else if (navigator.platform.startsWith("Win")) defaultFontSize = 30;
 
     memo.style.fontSize = defaultFontSize + "px";
 
