@@ -13,52 +13,41 @@
       --clock-font-size: 64px;
       --date-font-size: 20px;
     }
-
     * { box-sizing: border-box; }
     html, body {
       margin: 0; padding: 0;
       height: 100%; width: 100%;
       background-color: black; color: white;
       font-family: 'Orbitron', sans-serif;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
-
     #refresh-button {
       position: absolute; top: 20px; left: 20px;
       font-size: 2rem; background: transparent; color: white;
       border: none; padding: 5px 10px; cursor: pointer; z-index: 1000;
     }
-
     #date {
       font-size: var(--date-font-size);
-      text-align: center;
-      margin-top: 20px;
+      text-align: center; margin-top: 20px;
     }
-
     #clock-container {
       text-align: center;
-      font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums;
-      font-feature-settings: "tnum";
       font-size: var(--clock-font-size);
       line-height: 1;
       margin-top: 10px;
       margin-left: -100px;
     }
-
     #time {
       display: inline-block;
       min-width: 6ch;
       text-align: right;
     }
-
     #seconds {
       display: inline-block;
       min-width: 2ch;
       text-align: left;
     }
-
     .toolbar {
       display: flex;
       justify-content: center;
@@ -66,49 +55,34 @@
       margin: 10px 0;
       flex-wrap: wrap;
     }
-
     .toolbar select, .toolbar button {
-      background: none;
-      color: white;
-      border: none;
-      padding: 5px 8px;
-      font-size: 1rem;
-      font-weight: bold;
+      background: none; color: white;
+      border: none; padding: 5px 8px;
+      font-size: 1rem; font-weight: bold;
       cursor: pointer;
     }
-
     .toolbar button.active {
       background-color: white;
       color: black;
       border-radius: 4px;
     }
-
     .toolbar select option {
       background-color: black;
       color: white;
     }
-
     #memo-container {
-      flex: 1;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
+      flex: 1; padding: 10px;
+      display: flex; flex-direction: column;
     }
-
     #memo {
       font-family: Arial, sans-serif;
-      width: 100%;
-      flex: 1;
-      background-color: #111;
-      color: white;
-      border: none;
-      resize: none;
-      outline: none;
+      width: 100%; flex: 1;
+      background-color: #111; color: white;
+      border: none; outline: none;
       padding: 10px;
       line-height: 1.5;
       overflow-y: auto;
     }
-
     #memo * {
       font-family: Arial, sans-serif !important;
       line-height: 1.5 !important;
@@ -118,12 +92,10 @@
 </head>
 <body>
   <button id="refresh-button" onclick="location.reload()">⟳</button>
-
   <div id="date"></div>
   <div id="clock-container">
     <span id="time">00:00</span><span id="seconds">00</span>
   </div>
-
   <div class="toolbar">
     <button id="fontSizeIncrease">A↑</button>
     <button id="fontSizeDecrease">A↓</button>
@@ -137,7 +109,6 @@
     <button id="boldButton">B</button>
     <button id="resetStyle">Reset</button>
   </div>
-
   <div id="memo-container">
     <div id="memo" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   </div>
@@ -180,7 +151,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기 감지 및 초기 폰트 설정
+    // 기기 감지
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) memo.style.fontSize = "14px";
     else if (/ipad/.test(ua)) memo.style.fontSize = "40px";
@@ -200,30 +171,32 @@
         memo.innerHTML = value;
       }
     });
-
     memo.addEventListener("input", saveMemo);
 
     function applyStyleToSelection(styleCallback) {
       const selection = window.getSelection();
-      if (!selection.rangeCount) return;
+      if (!selection.rangeCount || selection.isCollapsed) return;
       const range = selection.getRangeAt(0);
-      if (range.collapsed) return;
-
       const span = document.createElement("span");
       span.appendChild(range.extractContents());
       styleCallback(span);
       range.insertNode(span);
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.addRange(newRange);
       saveMemo();
     }
 
     fontSizeIncrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) + 1;
-        memo.style.fontSize = size + "px";
+        let current = parseInt(window.getComputedStyle(memo).fontSize) || 14;
+        memo.style.fontSize = (current + 1) + "px";
+        saveMemo();
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          let current = parseInt(window.getComputedStyle(span).fontSize) || 14;
           span.style.fontSize = (current + 1) + "px";
         });
       }
@@ -232,11 +205,12 @@
     fontSizeDecrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let size = parseInt(getComputedStyle(memo).fontSize) - 1;
-        memo.style.fontSize = size + "px";
+        let current = parseInt(window.getComputedStyle(memo).fontSize) || 14;
+        memo.style.fontSize = (current - 1) + "px";
+        saveMemo();
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          let current = parseInt(window.getComputedStyle(span).fontSize) || 14;
           span.style.fontSize = (current - 1) + "px";
         });
       }
@@ -257,9 +231,7 @@
 
     resetButton.addEventListener("click", () => {
       applyStyleToSelection(span => {
-        span.style.fontSize = "";
-        span.style.color = "";
-        span.style.fontWeight = "";
+        span.removeAttribute("style");
       });
       boldButton.classList.remove("active");
       colorSelect.value = "white";
