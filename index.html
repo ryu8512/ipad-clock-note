@@ -180,13 +180,23 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기 감지 및 초기 폰트 설정
+    // 기기별 폰트 크기 감지 및 기본값 설정
     const ua = navigator.userAgent.toLowerCase();
-    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
-    else if (/ipad/.test(ua)) memo.style.fontSize = "40px";
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "40px";
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "40px";
-    else memo.style.fontSize = "40px";
+    let defaultFontSize;
+
+    if (/iphone/.test(ua)) {
+      defaultFontSize = 14;
+    } else if (/ipad/.test(ua)) {
+      defaultFontSize = 40;
+    } else if (/samsung/.test(ua) && /sm-t733/.test(ua)) {
+      defaultFontSize = 40;
+    } else if (navigator.platform.startsWith("Win")) {
+      defaultFontSize = 40;
+    } else {
+      defaultFontSize = 40;
+    }
+
+    memo.style.fontSize = defaultFontSize + "px";
 
     // 메모 저장
     function saveMemo() {
@@ -213,6 +223,13 @@
       span.appendChild(range.extractContents());
       styleCallback(span);
       range.insertNode(span);
+
+      // 커서를 span 뒤로 이동
+      range.setStartAfter(span);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
       saveMemo();
     }
 
@@ -223,7 +240,7 @@
         memo.style.fontSize = size + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          let current = parseInt(window.getComputedStyle(span).fontSize || defaultFontSize);
           span.style.fontSize = (current + 1) + "px";
         });
       }
@@ -236,7 +253,7 @@
         memo.style.fontSize = size + "px";
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          let current = parseInt(window.getComputedStyle(span).fontSize || defaultFontSize);
           span.style.fontSize = (current - 1) + "px";
         });
       }
