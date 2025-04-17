@@ -183,13 +183,17 @@
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const date = String(now.getDate()).padStart(2, "0");
-      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const day = dayNames[now.getDay()];
+      const dayNamesEng = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayNamesKor = ["일", "월", "화", "수", "목", "금", "토"];
+      const dayIndex = now.getDay();
+      const dayEng = dayNamesEng[dayIndex];
+      const dayKor = dayNamesKor[dayIndex];
+      
       const hours = String(now.getHours()).padStart(2, "0");
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
-      document.getElementById("date").textContent = `${year}.${month}.${date}.${day}`;
+      document.getElementById("date").textContent = `${year}.${month}.${date}.${dayEng} (${dayKor})`;
       document.getElementById("time").textContent = `${hours}:${minutes}:`;
       document.getElementById("seconds").textContent = `${seconds}`;
     }
