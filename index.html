@@ -184,10 +184,10 @@
     const ua = navigator.userAgent.toLowerCase();
     const isIpad = /ipad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if (/iphone/.test(ua)) memo.style.fontSize = "14px";
-    else if (isIpad) memo.style.fontSize = "20px";
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "18px"; // Galaxy Tab S7 FE
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "22px";
-    else memo.style.fontSize = "20px";
+    else if (isIpad) memo.style.fontSize = "30px";
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "30px"; // Galaxy Tab S7 FE
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "30px";
+    else memo.style.fontSize = "30px";
 
     // 메모 저장
     function saveMemo() {
