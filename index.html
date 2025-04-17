@@ -151,7 +151,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기 감지
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) memo.style.fontSize = "14px";
     else if (/ipad/.test(ua)) memo.style.fontSize = "40px";
@@ -159,7 +158,6 @@
     else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "40px";
     else memo.style.fontSize = "40px";
 
-    // 메모 저장
     function saveMemo() {
       memoRef.set(memo.innerHTML);
       localStorage.setItem("memo", memo.innerHTML);
@@ -181,22 +179,31 @@
       span.appendChild(range.extractContents());
       styleCallback(span);
       range.insertNode(span);
-      selection.removeAllRanges();
+
+      // 커서를 span 뒤로 이동하여 연속 스타일 적용 가능하게
       const newRange = document.createRange();
-      newRange.selectNodeContents(span);
+      newRange.setStartAfter(span);
+      newRange.collapse(true);
+      selection.removeAllRanges();
       selection.addRange(newRange);
+
       saveMemo();
+    }
+
+    function getCurrentFontSize(el) {
+      const computed = window.getComputedStyle(el);
+      return parseInt(computed.fontSize) || 14;
     }
 
     fontSizeIncrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let current = parseInt(window.getComputedStyle(memo).fontSize) || 14;
+        const current = getCurrentFontSize(memo);
         memo.style.fontSize = (current + 1) + "px";
         saveMemo();
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize) || 14;
+          const current = getCurrentFontSize(span);
           span.style.fontSize = (current + 1) + "px";
         });
       }
@@ -205,12 +212,12 @@
     fontSizeDecrease.addEventListener("click", () => {
       const selection = window.getSelection();
       if (selection.isCollapsed) {
-        let current = parseInt(window.getComputedStyle(memo).fontSize) || 14;
+        const current = getCurrentFontSize(memo);
         memo.style.fontSize = (current - 1) + "px";
         saveMemo();
       } else {
         applyStyleToSelection(span => {
-          let current = parseInt(window.getComputedStyle(span).fontSize) || 14;
+          const current = getCurrentFontSize(span);
           span.style.fontSize = (current - 1) + "px";
         });
       }
