@@ -135,7 +135,7 @@
       <option value="yellow">Yellow</option>
     </select>
     <button id="boldButton">B</button>
-    <button id="resetButton">Reset</button>
+    <button id="resetStyle">Reset</button>
   </div>
 
   <div id="memo-container">
@@ -164,7 +164,7 @@
     const fontSizeDecrease = document.getElementById("fontSizeDecrease");
     const colorSelect = document.getElementById("colorPicker");
     const boldButton = document.getElementById("boldButton");
-    const resetButton = document.getElementById("resetButton");
+    const resetButton = document.getElementById("resetStyle");
 
     function updateClock() {
       const now = new Date();
@@ -180,15 +180,13 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기 감지 및 기본 폰트 크기 설정
-    let defaultFontSize = 40;
+    // 기기 감지 및 초기 폰트 설정
     const ua = navigator.userAgent.toLowerCase();
-    if (/iphone/.test(ua)) defaultFontSize = 16;
-    else if (/ipad/.test(ua) || (navigator.userAgent.includes("Macintosh") && 'ontouchend' in document)) defaultFontSize = 40;
-    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) defaultFontSize = 40;
-    else if (navigator.platform.startsWith("Win")) defaultFontSize = 40;
-
-    memo.style.fontSize = defaultFontSize + "px";
+    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
+    else if (/ipad/.test(ua)) memo.style.fontSize = "40px";
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) memo.style.fontSize = "40px";
+    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "40px";
+    else memo.style.fontSize = "40px";
 
     // 메모 저장
     function saveMemo() {
@@ -205,51 +203,66 @@
 
     memo.addEventListener("input", saveMemo);
 
-    // 스타일 적용
-    function applyStyle(fontSizeChange = 0) {
+    function applyStyleToSelection(styleCallback) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
       const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
+      if (range.collapsed) return;
 
-      if (selectedText.length === 0) {
-        // 선택 없음 → 전체 메모 폰트 크기 조절
-        let currentSize = parseInt(getComputedStyle(memo).fontSize);
-        let newSize = currentSize + fontSizeChange;
-        memo.style.fontSize = newSize + "px";
-        memo.querySelectorAll("span").forEach(span => {
-          span.style.fontSize = newSize + "px";
-          span.style.lineHeight = "1.5";
-        });
-      } else {
-        // 선택 있음 → 해당 영역만 스타일 적용
-        const span = document.createElement("span");
-        const selectionFontSize = parseInt(getComputedStyle(memo).fontSize) + fontSizeChange;
-        span.style.fontSize = selectionFontSize + "px";
-        span.style.lineHeight = "1.5";
-        span.style.color = colorSelect.value;
-        span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
-        span.textContent = selectedText;
-
-        range.deleteContents();
-        range.insertNode(span);
-      }
+      const span = document.createElement("span");
+      span.appendChild(range.extractContents());
+      styleCallback(span);
+      range.insertNode(span);
       saveMemo();
     }
 
-    fontSizeIncrease.addEventListener("click", () => applyStyle(1));
-    fontSizeDecrease.addEventListener("click", () => applyStyle(-1));
+    fontSizeIncrease.addEventListener("click", () => {
+      const selection = window.getSelection();
+      if (selection.isCollapsed) {
+        let size = parseInt(getComputedStyle(memo).fontSize) + 1;
+        memo.style.fontSize = size + "px";
+      } else {
+        applyStyleToSelection(span => {
+          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          span.style.fontSize = (current + 1) + "px";
+        });
+      }
+    });
 
-    colorSelect.addEventListener("change", () => applyStyle(0));
+    fontSizeDecrease.addEventListener("click", () => {
+      const selection = window.getSelection();
+      if (selection.isCollapsed) {
+        let size = parseInt(getComputedStyle(memo).fontSize) - 1;
+        memo.style.fontSize = size + "px";
+      } else {
+        applyStyleToSelection(span => {
+          let current = parseInt(window.getComputedStyle(span).fontSize || "14");
+          span.style.fontSize = (current - 1) + "px";
+        });
+      }
+    });
+
+    colorSelect.addEventListener("change", () => {
+      applyStyleToSelection(span => {
+        span.style.color = colorSelect.value;
+      });
+    });
+
     boldButton.addEventListener("click", () => {
       boldButton.classList.toggle("active");
-      applyStyle(0);
+      applyStyleToSelection(span => {
+        span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
+      });
     });
 
     resetButton.addEventListener("click", () => {
-      memo.innerHTML = "";
-      memo.style.fontSize = defaultFontSize + "px";
-      saveMemo();
+      applyStyleToSelection(span => {
+        span.style.fontSize = "";
+        span.style.color = "";
+        span.style.fontWeight = "";
+      });
+      boldButton.classList.remove("active");
+      colorSelect.value = "white";
     });
   </script>
 </body>
