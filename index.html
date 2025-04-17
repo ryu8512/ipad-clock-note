@@ -135,7 +135,7 @@
       <option value="yellow">Yellow</option>
     </select>
     <button id="boldButton">B</button>
-    <button id="resetStyle">Reset</button>
+    <button id="resetButton">Reset</button>
   </div>
 
   <div id="memo-container">
@@ -164,7 +164,7 @@
     const fontSizeDecrease = document.getElementById("fontSizeDecrease");
     const colorSelect = document.getElementById("colorPicker");
     const boldButton = document.getElementById("boldButton");
-    const resetButton = document.getElementById("resetStyle");
+    const resetButton = document.getElementById("resetButton");
 
     function updateClock() {
       const now = new Date();
@@ -180,13 +180,15 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 기기별 폰트 크기 설정
+    // 기기 감지 및 기본 폰트 크기 설정
+    let defaultFontSize = 20;
     const ua = navigator.userAgent.toLowerCase();
-    if (/iphone/.test(ua)) memo.style.fontSize = "14px";
-    else if (/ipad/.test(ua)) memo.style.fontSize = "30px";
-    else if (/sm-t733/.test(ua)) memo.style.fontSize = "30px"; // 갤탭 S7 FE
-    else if (navigator.platform.startsWith("Win")) memo.style.fontSize = "30px";
-    else memo.style.fontSize = "30px";
+    if (/iphone/.test(ua)) defaultFontSize = 14;
+    else if (/ipad/.test(ua) || (navigator.userAgent.includes("Macintosh") && 'ontouchend' in document)) defaultFontSize = 30;
+    else if (/samsung/.test(ua) && /sm-t733/.test(ua)) defaultFontSize = 18;
+    else if (navigator.platform.startsWith("Win")) defaultFontSize = 22;
+
+    memo.style.fontSize = defaultFontSize + "px";
 
     // 메모 저장
     function saveMemo() {
@@ -204,66 +206,49 @@
     memo.addEventListener("input", saveMemo);
 
     // 스타일 적용
-    function applyStyle() {
+    function applyStyle(fontSizeChange = 0) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
       const range = selection.getRangeAt(0);
       const selectedText = range.toString();
-      if (!selectedText) return;
 
-      const span = document.createElement("span");
-      const computedStyle = window.getComputedStyle(memo);
-      span.style.fontSize = computedStyle.fontSize;
-      span.style.lineHeight = "1.5";
-      span.style.color = colorSelect.value;
-      span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
-      span.textContent = selectedText;
+      if (selectedText.length === 0) {
+        // 선택 없음 → 전체 메모 폰트 크기 조절
+        let currentSize = parseInt(getComputedStyle(memo).fontSize);
+        let newSize = currentSize + fontSizeChange;
+        memo.style.fontSize = newSize + "px";
+        memo.querySelectorAll("span").forEach(span => {
+          span.style.fontSize = newSize + "px";
+          span.style.lineHeight = "1.5";
+        });
+      } else {
+        // 선택 있음 → 해당 영역만 스타일 적용
+        const span = document.createElement("span");
+        const selectionFontSize = parseInt(getComputedStyle(memo).fontSize) + fontSizeChange;
+        span.style.fontSize = selectionFontSize + "px";
+        span.style.lineHeight = "1.5";
+        span.style.color = colorSelect.value;
+        span.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
+        span.textContent = selectedText;
 
-      range.deleteContents();
-      range.insertNode(span);
+        range.deleteContents();
+        range.insertNode(span);
+      }
       saveMemo();
     }
 
-    fontSizeIncrease.addEventListener("click", () => {
-      let currentSize = parseInt(getComputedStyle(memo).fontSize);
-      let newSize = currentSize + 1;
-      memo.style.fontSize = newSize + "px";
-      memo.querySelectorAll("span").forEach(span => {
-        span.style.fontSize = newSize + "px";
-        span.style.lineHeight = "1.5";
-      });
-      saveMemo();
-    });
+    fontSizeIncrease.addEventListener("click", () => applyStyle(1));
+    fontSizeDecrease.addEventListener("click", () => applyStyle(-1));
 
-    fontSizeDecrease.addEventListener("click", () => {
-      let currentSize = parseInt(getComputedStyle(memo).fontSize);
-      let newSize = currentSize - 1;
-      memo.style.fontSize = newSize + "px";
-      memo.querySelectorAll("span").forEach(span => {
-        span.style.fontSize = newSize + "px";
-        span.style.lineHeight = "1.5";
-      });
-      saveMemo();
-    });
-
-    colorSelect.addEventListener("change", applyStyle);
+    colorSelect.addEventListener("change", () => applyStyle(0));
     boldButton.addEventListener("click", () => {
       boldButton.classList.toggle("active");
-      applyStyle();
+      applyStyle(0);
     });
 
-    // 리셋 버튼 이벤트
     resetButton.addEventListener("click", () => {
-      const selection = window.getSelection();
-      if (selection.rangeCount && !selection.isCollapsed) {
-        const range = selection.getRangeAt(0);
-        const plainText = range.toString();
-        range.deleteContents();
-        range.insertNode(document.createTextNode(plainText));
-      } else {
-        const plainText = memo.innerText;
-        memo.innerHTML = plainText.replace(/\n/g, "<br>");
-      }
+      memo.innerHTML = "";
+      memo.style.fontSize = defaultFontSize + "px";
       saveMemo();
     });
   </script>
