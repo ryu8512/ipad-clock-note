@@ -181,7 +181,7 @@
     updateClock();
 
     // 기기 감지 및 기본 폰트 크기 설정
-    let defaultFontSize = 40;
+    let defaultFontSize = 30;
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone/.test(ua)) defaultFontSize = 14;
     else if (/ipad/.test(ua) || (navigator.userAgent.includes("Macintosh") && 'ontouchend' in document)) defaultFontSize = 40;
